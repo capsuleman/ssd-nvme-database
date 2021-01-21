@@ -3,12 +3,13 @@
 
 class Table
 {
-    int fd;            // File descriptor where data is stored
-    int nb_of_column;  // Number of columns / attributes
-    Column *columns[]; // List of table's column
+    int fd;              // File descriptor where data is stored
+    int attribute_count; // Number of int columns
+    int value_count;     // Number of double columns
+    Column *columns[];   // List of table's column
 
 public:
-    Table();
+    Table(int attribute_count, int value_count);
     ~Table();
 
     int readInt(int row_pos, int column);

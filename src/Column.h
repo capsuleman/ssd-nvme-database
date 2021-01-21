@@ -2,6 +2,7 @@
 #include "main.h"
 #include "Chunk.h"
 
+// specify if double or single on creation
 class Column
 {
     int fd;                 // File descriptor where data is stored
