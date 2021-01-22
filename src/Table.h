@@ -1,12 +1,13 @@
 #include "Column.h"
 #include "main.h"
+#include <vector>
 
 class Table
 {
     int fd;              // File descriptor where data is stored
     int attribute_count; // Number of int columns
     int value_count;     // Number of double columns
-    Column *columns[];   // List of table's column
+    std::vector<Column> columns;   // List of table's column
 
 public:
     Table(int attribute_count, int value_count);

@@ -22,16 +22,15 @@ Table::Table(int attribute_count, int value_count)
     this->fd = fileno(fp);
 
     // create columns
-    this->columns = new Column[this->attribute_count + this->value_count];
 
     for (int i = 0; i < this->attribute_count; i++)
     {
-        this->columns[i] = new Column(this->fd);
+        this->columns[i] = Column(this->fd);
     }
 
     for (int i = this->attribute_count; i < this->value_count; i++)
     {
-        this->columns[i] = new Column(this->fd);
+        this->columns[i] = Column(this->fd);
     }
 }
 
