@@ -1,5 +1,5 @@
 #include "Column.h"
-
+#include "Chunk.h"
 
 Column::Column(int fd, int isDouble)
 {

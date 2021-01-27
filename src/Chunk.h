@@ -1,3 +1,6 @@
+#ifndef __CHUNK_H
+#define __CHUNK_H
+
 class Chunk
 {
     int fd;           // File descriptor where data is stored
@@ -9,18 +12,12 @@ public:
     Chunk(int fd, int starting_pos);
     ~Chunk();
 
-    virtual void load();   // Load the content
-    virtual void unload(); // Unload the content
-    virtual int readInt(int chunk_pos);
-    virtual double readDouble(int chunk_pos);
-    virtual void writeInt(int chunk_pos, int value);
-    virtual void writeDouble(int chunk_pos, double value);
+    void load();   // Load the content
+    void unload(); // Unload the content
+    int readInt(int chunk_pos);
+    double readDouble(int chunk_pos);
+    void writeInt(int chunk_pos, int value);
+    void writeDouble(int chunk_pos, double value);
 };
 
-class IntegerChunk : public Chunk
-{
-};
-
-class DoubleChunk : public Chunk
-{
-};
+#endif

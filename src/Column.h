@@ -9,9 +9,9 @@
 // specify if double or single on creation
 class Column
 {
-    int fd;                 // File descriptor where data is stored
+    int fd; // File descriptor where data is stored
     int isDouble;
-    std::vector<Column> columns; // Chunks constituting the column
+    std::vector<Chunk> chunks; // Chunks constituting the column
 
 public:
     Column(int fd, int isDouble);
