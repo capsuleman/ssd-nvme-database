@@ -10,11 +10,11 @@
 class Column
 {
     int fd;                 // File descriptor where data is stored
-    IntegerChunk *chunks[]; // Chunks constituting the column
+    int isDouble;
+    std::vector<Column> columns; // Chunks constituting the column
 
 public:
-    Column(); // ???
-    Column(int fd);
+    Column(int fd, int isDouble);
     ~Column();
 
     int readInt(int row_pos);
