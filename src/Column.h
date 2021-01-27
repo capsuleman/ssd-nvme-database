@@ -1,4 +1,8 @@
+#ifndef __COLUMN_H
+#define __COLUMN_H
+
 #include <bitset>
+#include <vector>
 #include "main.h"
 #include "Chunk.h"
 
@@ -9,6 +13,7 @@ class Column
     IntegerChunk *chunks[]; // Chunks constituting the column
 
 public:
+    Column(); // ???
     Column(int fd);
     ~Column();
 
@@ -18,3 +23,5 @@ public:
     void writeDouble(int row_pos, double value);
     std::bitset<CHUNK_SIZE> *findRows(int predicate);
 };
+
+#endif

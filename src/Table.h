@@ -1,13 +1,16 @@
+#ifndef __TABLE_H
+#define __TABLE_H
+
 #include "Column.h"
 #include "main.h"
 #include <vector>
 
 class Table
 {
-    int fd;              // File descriptor where data is stored
-    int attribute_count; // Number of int columns
-    int value_count;     // Number of double columns
-    std::vector<Column> columns;   // List of table's column
+    int fd;                      // File descriptor where data is stored
+    int attribute_count;         // Number of int columns
+    int value_count;             // Number of double columns
+    std::vector<Column> columns; // List of table's column
 
 public:
     Table(int attribute_count, int value_count);
@@ -20,3 +23,5 @@ public:
 
     std::bitset<CHUNK_SIZE> *findRows(int *predicates);
 };
+
+#endif
