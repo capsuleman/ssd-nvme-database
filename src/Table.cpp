@@ -2,14 +2,9 @@
 #include <cstdio>
 
 #include "Table.h"
-#include "Column.h"
 
-Table::Table(int attribute_count, int value_count)
+Table::Table(int attribute_count, int value_count) : attribute_count(attribute_count), value_count(value_count), columns(std::vector<Column>())
 {
-    this->attribute_count = attribute_count;
-    this->value_count = value_count;
-    this->columns = std::vector<Column>();
-
     FILE *fp;
     fp = tmpfile();
 
@@ -21,20 +16,22 @@ Table::Table(int attribute_count, int value_count)
 
     std::cout << "Created temporary file " << fp << std::endl;
 
-    this->fd = fileno(fp);
+    int fd = fileno(fp);
+    this->memory_allocator = new MemoryAllocator(fd);
 
     // create columns
     for (int i = 0; i < this->attribute_count; i++)
     {
-        this->columns.emplace_back(this->fd, 0);
+        this->columns.emplace_back(this->memory_allocator, false);
     }
 
     for (int i = this->attribute_count; i < this->value_count; i++)
     {
-        this->columns.emplace_back(this->fd, 1);
+        this->columns.emplace_back(this->memory_allocator, true);
     }
 };
 
 Table::~Table()
 {
+    delete this->memory_allocator;
 }

@@ -5,16 +5,17 @@
 #include <vector>
 #include "main.h"
 #include "Chunk.h"
+#include "MemoryAllocator.h"
 
 // specify if double or single on creation
 class Column
 {
-    int fd; // File descriptor where data is stored
-    int isDouble;
-    std::vector<Chunk> chunks; // Chunks constituting the column
+    MemoryAllocator *memory_allocator; // Memory Allocator to generate new chunk
+    bool is_double;                    // Integer or double column
+    std::vector<Chunk> chunks;         // Chunks constituting the column
 
 public:
-    Column(int fd, int isDouble);
+    Column(MemoryAllocator *memory_allocator, bool is_double);
     ~Column();
 
     int readInt(int row_pos);

@@ -1,16 +1,17 @@
 #ifndef __TABLE_H
 #define __TABLE_H
 
-#include "Column.h"
-#include "main.h"
 #include <vector>
+
+#include "Column.h"
+#include "MemoryAllocator.h"
 
 class Table
 {
-    int fd;                      // File descriptor where data is stored
-    int attribute_count;         // Number of int columns
-    int value_count;             // Number of double columns
-    std::vector<Column> columns; // List of table's column
+    MemoryAllocator *memory_allocator; // Memory Allocator to generate new chunk
+    int attribute_count;               // Number of int columns
+    int value_count;                   // Number of double columns
+    std::vector<Column> columns;       // List of table's column
 
 public:
     Table(int attribute_count, int value_count);
