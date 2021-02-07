@@ -25,3 +25,10 @@ MemoryAllocator::MemoryAllocator()
 MemoryAllocator::~MemoryAllocator()
 {
 }
+
+Chunk MemoryAllocator::getChunk(bool is_double)
+{
+    Chunk new_chunk{fd, last_line, is_double};
+    this->last_line += CHUNK_SIZE * (is_double ? sizeof(double) : sizeof(int));
+    return new_chunk;
+}
