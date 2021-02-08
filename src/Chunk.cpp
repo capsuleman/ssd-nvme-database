@@ -6,6 +6,11 @@
 Chunk::Chunk(int fd, int starting_pos, bool is_double)
     : fd(fd), starting_pos(starting_pos), is_double(is_double)
 {
+    if (is_double)
+        intContent = std::vector<int>();
+    else
+        doubleContent = std::vector<double>();
+
     int zeroes[CHUNK_SIZE];
     for (int i = 0; i < CHUNK_SIZE; i++)
         zeroes[i] = 0;
@@ -24,13 +29,29 @@ Chunk::~Chunk()
 void Chunk::load()
 {
     if (is_double)
-        pread(fd, &doubleContent, CHUNK_SIZE * sizeof(double), starting_pos);
+    {
+        doubleContent.reserve(CHUNK_SIZE);
+        pread(fd, &doubleContent[0], CHUNK_SIZE * sizeof(int), starting_pos);
+    }
     else
-        pread(fd, &intContent, CHUNK_SIZE * sizeof(int), starting_pos);
+    {
+        intContent.reserve(CHUNK_SIZE);
+        pread(fd, &intContent[0], CHUNK_SIZE * sizeof(int), starting_pos);
+    }
 }
 
 void Chunk::unload()
 {
+    if (is_double)
+    {
+        doubleContent.clear();
+        doubleContent.shrink_to_fit();
+    }
+    else
+    {
+        intContent.clear();
+        intContent.shrink_to_fit();
+    }
 }
 
 int Chunk::readInt(int chunk_pos)
