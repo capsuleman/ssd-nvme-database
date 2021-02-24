@@ -7,9 +7,9 @@ Chunk::Chunk(int fd, int starting_pos, bool is_double)
     : fd(fd), starting_pos(starting_pos), is_double(is_double)
 {
     if (is_double)
-        intContent = std::vector<int>();
-    else
         doubleContent = std::vector<double>();
+    else
+        intContent = std::vector<int>();
 
     int zeroes[CHUNK_SIZE];
     for (int i = 0; i < CHUNK_SIZE; i++)
@@ -25,13 +25,12 @@ Chunk::~Chunk()
 {
 }
 
-// load and unload should be private?
 void Chunk::load()
 {
     if (is_double)
     {
         doubleContent.reserve(CHUNK_SIZE);
-        pread(fd, &doubleContent[0], CHUNK_SIZE * sizeof(int), starting_pos);
+        pread(fd, &doubleContent[0], CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
     {
@@ -61,7 +60,7 @@ int Chunk::readInt(int chunk_pos)
 
 double Chunk::readDouble(int chunk_pos)
 {
-    return 0;
+    return doubleContent[chunk_pos];
 }
 
 void Chunk::writeInt(int chunk_pos, int value)
@@ -72,4 +71,6 @@ void Chunk::writeInt(int chunk_pos, int value)
 
 void Chunk::writeDouble(int chunk_pos, double value)
 {
+    int file_pos = starting_pos + chunk_pos * sizeof(double);
+    pwrite(fd, &value, sizeof(double), file_pos);
 }

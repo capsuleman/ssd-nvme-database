@@ -8,7 +8,7 @@ Table::Table(int attribute_count, int value_count) : attribute_count(attribute_c
     for (int i = 0; i < this->attribute_count; i++)
         this->columns.emplace_back(this->memory_allocator, false);
 
-    for (int i = this->attribute_count; i < this->value_count; i++)
+    for (int i = this->attribute_count; i < (this->attribute_count + this->value_count); i++)
         this->columns.emplace_back(this->memory_allocator, true);
 };
 

@@ -25,7 +25,10 @@ double Column::readDouble(int row_pos)
 {
     int chunk_no = (int)row_pos / CHUNK_SIZE;
     int chunk_pos = row_pos % CHUNK_SIZE;
-    return this->chunks[chunk_no].readDouble(chunk_pos);
+    chunks[chunk_no].load();
+    double value = chunks[chunk_no].readDouble(chunk_pos);
+    chunks[chunk_no].unload();
+    return value;
 }
 
 void Column::writeInt(int row_pos, int value)
@@ -44,7 +47,14 @@ void Column::writeInt(int row_pos, int value)
 
 void Column::writeDouble(int row_pos, double value)
 {
-    int chunk_no = (int)row_pos / CHUNK_SIZE;
-    int chunk_pos = row_pos % CHUNK_SIZE;
-    this->chunks[chunk_no].writeDouble(chunk_pos, value);
+    unsigned int chunk_no = (int)row_pos / CHUNK_SIZE;
+    unsigned int chunk_pos = row_pos % CHUNK_SIZE;
+
+    if (chunks.size() < chunk_no + 1)
+    {
+        Chunk new_chunk = memory_allocator->getChunk(true);
+        chunks.push_back(new_chunk);
+    }
+
+    chunks[chunk_no].writeDouble(chunk_pos, value);
 }
