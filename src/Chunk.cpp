@@ -6,15 +6,24 @@
 Chunk::Chunk(int fd, int starting_pos, bool is_double)
     : fd(fd), starting_pos(starting_pos), is_double(is_double)
 {
+    int number_written;
     if (is_double)
+    {
         doubleContent = std::vector<double>();
+        double zeroes[CHUNK_SIZE];
+        for (int i = 0; i < CHUNK_SIZE; i++)
+            zeroes[i] = 0.0;
+        number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(double), starting_pos);
+    }
     else
+    {
         intContent = std::vector<int>();
+        int zeroes[CHUNK_SIZE];
+        for (int i = 0; i < CHUNK_SIZE; i++)
+            zeroes[i] = 0;
+        number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(int), starting_pos);
+    }
 
-    int zeroes[CHUNK_SIZE];
-    for (int i = 0; i < CHUNK_SIZE; i++)
-        zeroes[i] = 0;
-    int number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(int), starting_pos);
     if (number_written == -1)
         std::cout << "Error creating a new chunk" << std::endl;
 
