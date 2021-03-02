@@ -2,19 +2,20 @@
 
 Table::Table(int attribute_count, int value_count) : attribute_count(attribute_count), value_count(value_count), columns(std::vector<Column>())
 {
-    this->memory_allocator = new MemoryAllocator();
-
     // create columns
-    for (int i = 0; i < this->attribute_count; i++)
-        this->columns.emplace_back(this->memory_allocator, false);
+    for (int i = 0; i < attribute_count; i++)
+    {
+        columns.emplace_back(memory_allocator, false);
+    }
 
-    for (int i = this->attribute_count; i < (this->attribute_count + this->value_count); i++)
-        this->columns.emplace_back(this->memory_allocator, true);
+    for (int i = attribute_count; i < (attribute_count + value_count); i++)
+    {
+        columns.emplace_back(memory_allocator, true);
+    }
 };
 
 Table::~Table()
 {
-    delete this->memory_allocator;
 }
 
 int Table::readInt(int row_pos, int column)

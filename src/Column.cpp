@@ -1,13 +1,10 @@
 #include "Column.h"
 #include <iostream>
 
-Column::Column(MemoryAllocator *memory_allocator, bool is_double)
-    : memory_allocator(memory_allocator), is_double(is_double)
-{
-    this->chunks = std::vector<Chunk>();
-};
+Column::Column(MemoryAllocator &memory_allocator, bool is_double)
+    : memory_allocator(memory_allocator), is_double(is_double) {}
 
-Column::~Column(){};
+Column::~Column() {}
 
 int Column::readInt(int row_pos)
 {
@@ -38,8 +35,7 @@ void Column::writeInt(int row_pos, int value)
 
     if (chunks.size() < chunk_no + 1)
     {
-        Chunk new_chunk = memory_allocator->getChunk(false);
-        chunks.push_back(new_chunk);
+        chunks.push_back(memory_allocator.getChunk(false));
     }
 
     chunks[chunk_no].writeInt(chunk_pos, value);
@@ -52,8 +48,7 @@ void Column::writeDouble(int row_pos, double value)
 
     if (chunks.size() < chunk_no + 1)
     {
-        Chunk new_chunk = memory_allocator->getChunk(true);
-        chunks.push_back(new_chunk);
+        chunks.push_back(memory_allocator.getChunk(true));
     }
 
     chunks[chunk_no].writeDouble(chunk_pos, value);

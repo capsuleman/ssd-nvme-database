@@ -9,7 +9,7 @@ Chunk::Chunk(int fd, int starting_pos, bool is_double)
     int number_written;
     if (is_double)
     {
-        doubleContent = std::vector<double>();
+        doubleContent.reset(nullptr);
         double zeroes[CHUNK_SIZE];
         for (int i = 0; i < CHUNK_SIZE; i++)
             zeroes[i] = 0.0;
@@ -17,7 +17,7 @@ Chunk::Chunk(int fd, int starting_pos, bool is_double)
     }
     else
     {
-        intContent = std::vector<int>();
+        intContent.reset(nullptr);
         int zeroes[CHUNK_SIZE];
         for (int i = 0; i < CHUNK_SIZE; i++)
             zeroes[i] = 0;
@@ -30,20 +30,37 @@ Chunk::Chunk(int fd, int starting_pos, bool is_double)
     std::cout << "Created empty chunk starting position " << starting_pos << std::endl;
 }
 
-Chunk::~Chunk()
+Chunk::Chunk(Chunk &&other) : fd(other.fd),
+                              starting_pos(other.starting_pos),
+                              is_double(other.is_double),
+                              nb_element(other.nb_element),
+                              intContent(std::move(other.intContent)),
+                              doubleContent(std::move(other.doubleContent))
 {
+}
+
+Chunk &Chunk::operator=(Chunk &&other)
+{
+    fd = other.fd;
+    starting_pos = other.starting_pos;
+    is_double = other.is_double;
+    nb_element = other.nb_element;
+    intContent = std::move(other.intContent);
+    doubleContent = std::move(other.doubleContent);
+
+    return *this;
 }
 
 void Chunk::load()
 {
     if (is_double)
     {
-        doubleContent.reserve(CHUNK_SIZE);
+        doubleContent.reset(new double[CHUNK_SIZE]);
         pread(fd, &doubleContent[0], CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
     {
-        intContent.reserve(CHUNK_SIZE);
+        intContent.reset(new int[CHUNK_SIZE]);
         pread(fd, &intContent[0], CHUNK_SIZE * sizeof(int), starting_pos);
     }
 }
@@ -51,15 +68,9 @@ void Chunk::load()
 void Chunk::unload()
 {
     if (is_double)
-    {
-        doubleContent.clear();
-        doubleContent.shrink_to_fit();
-    }
+        doubleContent.reset(nullptr);
     else
-    {
-        intContent.clear();
-        intContent.shrink_to_fit();
-    }
+        intContent.reset(nullptr);
 }
 
 int Chunk::readInt(int chunk_pos)

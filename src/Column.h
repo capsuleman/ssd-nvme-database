@@ -10,12 +10,15 @@
 // specify if double or single on creation
 class Column
 {
-    MemoryAllocator *memory_allocator; // Memory Allocator to generate new chunk
+    MemoryAllocator &memory_allocator; // Memory Allocator to generate new chunk
     bool is_double;                    // Integer or double column
     std::vector<Chunk> chunks;         // Chunks constituting the column
 
 public:
-    Column(MemoryAllocator *memory_allocator, bool is_double);
+    Column(MemoryAllocator &memory_allocator, bool is_double);
+    Column(Column &&) = default;
+    Column &operator=(Column &&) = default;
+
     ~Column();
 
     int readInt(int row_pos);
