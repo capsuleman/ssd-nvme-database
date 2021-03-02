@@ -1,18 +1,21 @@
 #include "Chunk.h"
+
+#include <cassert>
 #include <iostream>
 #include <unistd.h>
-#include <assert.h>
 
 Chunk::Chunk(int fd, int starting_pos, bool is_double)
     : fd(fd), starting_pos(starting_pos), is_double(is_double)
 {
-    int number_written;
+    int number_written = -1;
     if (is_double)
     {
         doubleContent.reset(nullptr);
         double zeroes[CHUNK_SIZE];
         for (int i = 0; i < CHUNK_SIZE; i++)
+        {
             zeroes[i] = 0.0;
+        }
         number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
@@ -20,22 +23,27 @@ Chunk::Chunk(int fd, int starting_pos, bool is_double)
         intContent.reset(nullptr);
         int zeroes[CHUNK_SIZE];
         for (int i = 0; i < CHUNK_SIZE; i++)
+        {
             zeroes[i] = 0;
+        }
         number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(int), starting_pos);
     }
 
     if (number_written == -1)
+    {
         std::cout << "Error creating a new chunk" << std::endl;
+    }
 
     std::cout << "Created empty chunk starting position " << starting_pos << std::endl;
 }
 
-Chunk::Chunk(Chunk &&other) : fd(other.fd),
-                              starting_pos(other.starting_pos),
-                              is_double(other.is_double),
-                              nb_element(other.nb_element),
-                              intContent(std::move(other.intContent)),
-                              doubleContent(std::move(other.doubleContent))
+Chunk::Chunk(Chunk &&other)
+    : fd(other.fd),
+      starting_pos(other.starting_pos),
+      is_double(other.is_double),
+      nb_element(other.nb_element),
+      intContent(std::move(other.intContent)),
+      doubleContent(std::move(other.doubleContent))
 {
 }
 
@@ -68,9 +76,13 @@ void Chunk::load()
 void Chunk::unload()
 {
     if (is_double)
+    {
         doubleContent.reset(nullptr);
+    }
     else
+    {
         intContent.reset(nullptr);
+    }
 }
 
 int Chunk::readInt(int chunk_pos)

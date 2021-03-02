@@ -1,5 +1,5 @@
-#ifndef __CHUNK_H
-#define __CHUNK_H
+#ifndef CHUNK_H
+#define CHUNK_H
 
 #include <cstddef>
 #include <memory>

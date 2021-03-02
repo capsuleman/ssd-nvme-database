@@ -1,5 +1,5 @@
-#ifndef __MAIN__
-#define __MAIN__
+#ifndef MAIN_H
+#define MAIN_H
 
 #define CHUNK_SIZE 8 // Number of ELEMENT (not size) in a chunk
 

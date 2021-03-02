@@ -3,20 +3,11 @@
 Table::Table(int attribute_count, int value_count) : attribute_count(attribute_count), value_count(value_count), columns(std::vector<Column>())
 {
     // create columns
-    for (int i = 0; i < attribute_count; i++)
+    for (int i = 0; i < attribute_count + value_count; i++)
     {
-        columns.emplace_back(memory_allocator, false);
-    }
-
-    for (int i = attribute_count; i < (attribute_count + value_count); i++)
-    {
-        columns.emplace_back(memory_allocator, true);
+        columns.emplace_back(memory_allocator, i >= attribute_count);
     }
 };
-
-Table::~Table()
-{
-}
 
 int Table::readInt(int row_pos, int column)
 {

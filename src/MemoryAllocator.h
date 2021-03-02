@@ -1,5 +1,5 @@
-#ifndef __MEMORY_ALLOCATOR_H
-#define __MEMORY_ALLOCATOR_H
+#ifndef MEMORY_ALLOCATOR_H
+#define MEMORY_ALLOCATOR_H
 
 #include "main.h"
 #include "Chunk.h"
@@ -11,7 +11,7 @@ class MemoryAllocator
 
 public:
     MemoryAllocator();
-    ~MemoryAllocator();
+    ~MemoryAllocator() = default;
 
     Chunk getChunk(bool is_double);
 };

@@ -1,5 +1,5 @@
-#ifndef __TABLE_H
-#define __TABLE_H
+#ifndef TABLE_H
+#define TABLE_H
 
 #include <vector>
 
@@ -15,7 +15,7 @@ class Table
 
 public:
     Table(int attribute_count, int value_count);
-    ~Table();
+    ~Table() = default;
 
     int readInt(int row_pos, int column);
     double readDouble(int row_pos, int column);

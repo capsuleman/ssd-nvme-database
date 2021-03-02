@@ -1,8 +1,9 @@
-#ifndef __COLUMN_H
-#define __COLUMN_H
+#ifndef COLUMN_H
+#define COLUMN_H
 
 #include <bitset>
 #include <vector>
+
 #include "main.h"
 #include "Chunk.h"
 #include "MemoryAllocator.h"
@@ -18,8 +19,7 @@ public:
     Column(MemoryAllocator &memory_allocator, bool is_double);
     Column(Column &&) = default;
     Column &operator=(Column &&) = default;
-
-    ~Column();
+    ~Column() = default;
 
     int readInt(int row_pos);
     double readDouble(int row_pos);
