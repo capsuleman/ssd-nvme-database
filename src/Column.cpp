@@ -50,3 +50,33 @@ void Column::writeDouble(int row_pos, double value)
 
     chunks[chunk_no].writeDouble(chunk_pos, value);
 }
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
+{
+    std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>(chunks.size());
+    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no++)
+    {
+        chunks[chunk_no].load();
+        for (unsigned long int chunk_pos = 0; chunk_pos < CHUNK_SIZE; chunk_pos++)
+        {
+            result[chunk_no][chunk_pos] = chunks[chunk_no].readInt(chunk_pos) == predicate;
+        }
+        chunks[chunk_no].unload();
+    }
+    return result;
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate)
+{
+    std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>(chunks.size());
+    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no++)
+    {
+        chunks[chunk_no].load();
+        for (unsigned long int chunk_pos = 0; chunk_pos < CHUNK_SIZE; chunk_pos++)
+        {
+            result[chunk_no][chunk_pos] = chunks[chunk_no].readDouble(chunk_pos) == predicate;
+        }
+        chunks[chunk_no].unload();
+    }
+    return result;
+}

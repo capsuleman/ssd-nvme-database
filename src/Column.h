@@ -25,7 +25,8 @@ public:
     double readDouble(int row_pos);
     void writeInt(int row_pos, int value);
     void writeDouble(int row_pos, double value);
-    std::bitset<CHUNK_SIZE> *findRows(int predicate);
+    std::vector<std::bitset<CHUNK_SIZE>> findIntRows(int predicate);
+    std::vector<std::bitset<CHUNK_SIZE>> findDoubleRows(double predicate);
 };
 
 #endif

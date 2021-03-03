@@ -33,3 +33,41 @@ void Table::writeDouble(int row_pos, int column, double value)
 {
     columns[column].writeDouble(row_pos, value);
 }
+
+std::vector<std::bitset<CHUNK_SIZE>> Table::findRows(int *attribute_predicates, double *value_predicates)
+{
+    std::vector<std::bitset<CHUNK_SIZE>> result;
+    for (int i = 0; i < attribute_count; i++)
+    {
+        if (result.empty())
+        {
+            result = columns[i].findIntRows(attribute_predicates[i]);
+        }
+        else
+        {
+            std::vector<std::bitset<CHUNK_SIZE>> partial_result{columns[i].findIntRows(attribute_predicates[i])};
+            for (long unsigned int j = 0; j < result.size(); j++)
+            {
+                result[j] &= partial_result[j];
+            }
+        }
+    }
+
+    for (int i = 0; i < value_count; i++)
+    {
+        if (result.empty())
+        {
+            result = columns[attribute_count + i].findDoubleRows(value_predicates[i]);
+        }
+        else
+        {
+            std::vector<std::bitset<CHUNK_SIZE>> partial_result{columns[attribute_count + i].findDoubleRows(value_predicates[i])};
+            for (long unsigned int j = 0; j < result.size(); j++)
+            {
+                result[j] &= partial_result[j];
+            }
+        }
+    }
+
+    return result;
+}

@@ -22,7 +22,7 @@ public:
     void writeInt(int row_pos, int column, int value);
     void writeDouble(int row_pos, int column, double value);
 
-    std::bitset<CHUNK_SIZE> *findRows(int *predicates);
+    std::vector<std::bitset<CHUNK_SIZE>> findRows(int *attribute_predicates, double *value_predicates);
 };
 
 #endif
