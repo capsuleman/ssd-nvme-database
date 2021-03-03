@@ -12,13 +12,6 @@ MemoryAllocator::MemoryAllocator()
     strncpy(nameBuff, "/tmp/ssd-bdd-XXXXXX", 21);
     fd = mkstemp(nameBuff);
     unlink(nameBuff);
-
-    char fname[FILENAME_MAX], link[FILENAME_MAX] = {0};
-    sprintf(fname, "/proc/self/fd/%d", fd);
-    if (readlink(fname, link, sizeof link - 1) > 0)
-    {
-        printf("Temporary file created : %s\n", link);
-    }
 }
 
 Chunk MemoryAllocator::getChunk(bool is_double)
