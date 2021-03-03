@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 
 #include "Table.h"
@@ -6,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-    const int table_size = 16;
+    const int table_size = 16 * 16;
     Table table{1, 1};
     for (int i = 0; i < table_size; i++)
     {
@@ -14,18 +15,12 @@ int main(int argc, char *argv[])
         table.writeDouble(i, 1, i + 0.1);
     }
 
-    std::cout << "Reading data on column 0 : ";
+    std::cout << "Testing data" << std::endl;
     for (int i = 0; i < table_size; i++)
     {
-        std::cout << table.readInt(i, 0) << " ";
+        assert(table.readInt(i, 0) == i);
+        assert(table.readDouble(i, 1) == i + 0.1);
     }
-    std::cout << std::endl;
 
-    std::cout << "Reading data on column 1 : ";
-    for (int i = 0; i < table_size; i++)
-    {
-        std::cout << table.readDouble(i, 1) << " ";
-    }
-    std::cout << std::endl;
     return 0;
 }

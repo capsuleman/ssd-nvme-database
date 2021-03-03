@@ -1,6 +1,5 @@
 #include "Chunk.h"
 
-#include <cassert>
 #include <iostream>
 #include <unistd.h>
 
@@ -34,7 +33,7 @@ Chunk::Chunk(int fd, int starting_pos, bool is_double)
         std::cout << "Error creating a new chunk" << std::endl;
     }
 
-    std::cout << "Created empty chunk starting position " << starting_pos << std::endl;
+    // std::cout << "Created empty chunk starting position " << starting_pos << std::endl;
 }
 
 Chunk::Chunk(Chunk &&other)
