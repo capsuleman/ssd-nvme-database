@@ -28,6 +28,8 @@ public:
     double readDouble(int chunk_pos);
     void writeInt(int chunk_pos, int value);
     void writeDouble(int chunk_pos, double value);
+    void writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, int *attributes);
+    void writeDoubles(unsigned int starting_chunk_pos, unsigned int number_of_values, double *values);
 };
 
 #endif

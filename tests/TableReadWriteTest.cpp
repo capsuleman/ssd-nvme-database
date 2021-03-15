@@ -20,7 +20,7 @@ TEST(TableReadWriteTest, TableReadWrite)
 
 TEST(TableReadWriteTest, TableReadWriteWithWriteRow)
 {
-    const int table_size = 16 * 16;
+    const int table_size = 1024;
     Table table{3, 2};
     for (int i = 0; i < table_size; i++)
     {

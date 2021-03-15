@@ -1,7 +1,10 @@
 #include "Column.h"
 
 Column::Column(MemoryAllocator &memory_allocator, bool is_double)
-    : memory_allocator(memory_allocator), is_double(is_double) {}
+    : memory_allocator(memory_allocator),
+      is_double(is_double)
+{
+}
 
 int Column::readInt(int row_pos)
 {
@@ -49,6 +52,48 @@ void Column::writeDouble(int row_pos, double value)
     }
 
     chunks[chunk_no].writeDouble(chunk_pos, value);
+}
+
+void Column::writeInts(int starting_row_pos, int number_of_rows, int *attributes)
+{
+    int starting_chunk_pos = starting_row_pos;
+    while (starting_chunk_pos - starting_row_pos < number_of_rows)
+    {
+        int number_of_values = CHUNK_SIZE - starting_chunk_pos % CHUNK_SIZE;
+        int remaining_number_of_values = number_of_rows - (starting_chunk_pos - starting_row_pos);
+        if (number_of_values > remaining_number_of_values)
+        {
+            number_of_values = remaining_number_of_values;
+        }
+        unsigned int chunk_no = starting_chunk_pos / CHUNK_SIZE;
+        if (chunks.size() < chunk_no + 1)
+        {
+            chunks.push_back(memory_allocator.getChunk(false));
+        }
+        chunks[chunk_no].writeInts(starting_chunk_pos % CHUNK_SIZE, number_of_values, &attributes[starting_chunk_pos - starting_row_pos]);
+        starting_chunk_pos += number_of_values;
+    }
+}
+
+void Column::writeDoubles(int starting_row_pos, int number_of_rows, double *values)
+{
+    int starting_chunk_pos = starting_row_pos;
+    while (starting_chunk_pos - starting_row_pos < number_of_rows)
+    {
+        int number_of_values = CHUNK_SIZE - starting_chunk_pos % CHUNK_SIZE;
+        int remaining_number_of_values = number_of_rows - (starting_chunk_pos - starting_row_pos);
+        if (number_of_values > remaining_number_of_values)
+        {
+            number_of_values = remaining_number_of_values;
+        }
+        unsigned int chunk_no = starting_chunk_pos / CHUNK_SIZE;
+        if (chunks.size() < chunk_no + 1)
+        {
+            chunks.push_back(memory_allocator.getChunk(true));
+        }
+        chunks[chunk_no].writeDoubles(starting_chunk_pos % CHUNK_SIZE, number_of_values, &values[starting_chunk_pos - starting_row_pos]);
+        starting_chunk_pos += number_of_values;
+    }
 }
 
 std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)

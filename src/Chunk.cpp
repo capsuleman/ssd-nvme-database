@@ -1,10 +1,14 @@
 #include "Chunk.h"
 
+#include <cerrno>
+#include <cstring>
 #include <iostream>
 #include <unistd.h>
 
 Chunk::Chunk(int fd, int starting_pos, bool is_double)
-    : fd(fd), starting_pos(starting_pos), is_double(is_double)
+    : fd(fd),
+      starting_pos(starting_pos),
+      is_double(is_double)
 {
     int number_written = -1;
     if (is_double)
@@ -30,10 +34,8 @@ Chunk::Chunk(int fd, int starting_pos, bool is_double)
 
     if (number_written == -1)
     {
-        std::cout << "Error creating a new chunk" << std::endl;
+        std::cout << "Error creating a new chunk starting at " << starting_pos << " (" << std::strerror(errno) << ")" << std::endl;
     }
-
-    // std::cout << "Created empty chunk starting position " << starting_pos << std::endl;
 }
 
 Chunk::Chunk(Chunk &&other)
@@ -104,4 +106,16 @@ void Chunk::writeDouble(int chunk_pos, double value)
 {
     int file_pos = starting_pos + chunk_pos * sizeof(double);
     pwrite(fd, &value, sizeof(double), file_pos);
+}
+
+void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, int *attributes)
+{
+    unsigned int file_pos = starting_pos + starting_chunk_pos * sizeof(int);
+    int number_written = pwrite(fd, attributes, number_of_values * sizeof(int), file_pos);
+}
+
+void Chunk::writeDoubles(unsigned int starting_chunk_pos, unsigned int number_of_values, double *values)
+{
+    unsigned int file_pos = starting_pos + starting_chunk_pos * sizeof(double);
+    int number_written = pwrite(fd, values, number_of_values * sizeof(double), file_pos);
 }

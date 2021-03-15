@@ -34,6 +34,21 @@ void Table::writeDouble(int row_pos, int column, double value)
     columns[column].writeDouble(row_pos, value);
 }
 
+void Table::writeRows(int starting_row_pos, int number_of_rows, int *attributes, double *values)
+{
+    for (int column = 0; column < attribute_count + value_count; column++)
+    {
+        if (column < attribute_count)
+        {
+            columns[column].writeInts(starting_row_pos, number_of_rows, &attributes[column * number_of_rows]);
+        }
+        else
+        {
+            columns[column].writeDoubles(starting_row_pos, number_of_rows, &values[(column - attribute_count) * number_of_rows]);
+        }
+    }
+}
+
 void Table::writeRow(int row_pos, int *attributes, double *values)
 {
     for (int column = 0; column < attribute_count + value_count; column++)
