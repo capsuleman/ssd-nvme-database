@@ -7,7 +7,7 @@
 class MemoryAllocator
 {
     int fd; // File descriptor where data is stored
-    int last_line;
+    unsigned long int last_line;
 
 public:
     MemoryAllocator();

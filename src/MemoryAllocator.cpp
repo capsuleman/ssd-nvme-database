@@ -12,6 +12,7 @@ MemoryAllocator::MemoryAllocator()
     strncpy(nameBuff, "/tmp/ssd-bdd-XXXXXX", 21);
     fd = mkstemp(nameBuff);
     unlink(nameBuff);
+    last_line = 0;
 }
 
 Chunk MemoryAllocator::getChunk(bool is_double)

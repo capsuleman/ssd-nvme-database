@@ -5,7 +5,7 @@
 #include <iostream>
 #include <unistd.h>
 
-Chunk::Chunk(int fd, int starting_pos, bool is_double)
+Chunk::Chunk(int fd, unsigned long int starting_pos, bool is_double)
     : fd(fd),
       starting_pos(starting_pos),
       is_double(is_double)
@@ -69,7 +69,7 @@ void Chunk::load()
     }
     else
     {
-        intContent.reset(new int[CHUNK_SIZE]);
+        intContent.reset(new unsigned int[CHUNK_SIZE]);
         pread(fd, &intContent[0], CHUNK_SIZE * sizeof(int), starting_pos);
     }
 }
@@ -86,36 +86,36 @@ void Chunk::unload()
     }
 }
 
-int Chunk::readInt(int chunk_pos)
+int Chunk::readInt(unsigned long int chunk_pos) const
 {
     return intContent[chunk_pos];
 }
 
-double Chunk::readDouble(int chunk_pos)
+double Chunk::readDouble(unsigned long int chunk_pos) const
 {
     return doubleContent[chunk_pos];
 }
 
-void Chunk::writeInt(int chunk_pos, int value)
+void Chunk::writeInt(unsigned int chunk_pos, unsigned int value) const
 {
-    int file_pos = starting_pos + chunk_pos * sizeof(int);
+    unsigned int file_pos = starting_pos + chunk_pos * sizeof(int);
     pwrite(fd, &value, sizeof(int), file_pos);
 }
 
-void Chunk::writeDouble(int chunk_pos, double value)
+void Chunk::writeDouble(unsigned int chunk_pos, double value) const
 {
-    int file_pos = starting_pos + chunk_pos * sizeof(double);
+    unsigned int file_pos = starting_pos + chunk_pos * sizeof(double);
     pwrite(fd, &value, sizeof(double), file_pos);
 }
 
-void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, int *attributes)
+void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const
 {
     unsigned int file_pos = starting_pos + starting_chunk_pos * sizeof(int);
-    int number_written = pwrite(fd, attributes, number_of_values * sizeof(int), file_pos);
+    pwrite(fd, attributes, number_of_values * sizeof(int), file_pos);
 }
 
-void Chunk::writeDoubles(unsigned int starting_chunk_pos, unsigned int number_of_values, double *values)
+void Chunk::writeDoubles(unsigned int starting_chunk_pos, unsigned int number_of_values, double *values) const
 {
     unsigned int file_pos = starting_pos + starting_chunk_pos * sizeof(double);
-    int number_written = pwrite(fd, values, number_of_values * sizeof(double), file_pos);
+    pwrite(fd, values, number_of_values * sizeof(double), file_pos);
 }

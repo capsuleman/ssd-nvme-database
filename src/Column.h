@@ -21,12 +21,12 @@ public:
     Column &operator=(Column &&) = default;
     ~Column() = default;
 
-    int readInt(int row_pos);
-    double readDouble(int row_pos);
-    void writeInt(int row_pos, int value);
-    void writeDouble(int row_pos, double value);
-    void writeInts(int starting_row_pos, int number_of_rows, int *attributes);
-    void writeDoubles(int starting_row_pos, int number_of_rows, double *values);
+    int readInt(unsigned long int row_pos);
+    double readDouble(unsigned long int row_pos);
+    void writeInt(unsigned long int row_pos, unsigned int value);
+    void writeDouble(unsigned long int row_pos, double value);
+    void writeInts(unsigned long int starting_row_pos, unsigned long int number_of_rows, unsigned int *attributes);
+    void writeDoubles(unsigned long int starting_row_pos, unsigned long int number_of_rows, double *values);
 
     std::vector<std::bitset<CHUNK_SIZE>> findIntRows(int predicate);
     std::vector<std::bitset<CHUNK_SIZE>> findDoubleRows(double predicate);

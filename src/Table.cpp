@@ -1,22 +1,22 @@
 #include "Table.h"
 
-Table::Table(int attribute_count, int value_count)
+Table::Table(unsigned int attribute_count, unsigned int value_count)
     : attribute_count(attribute_count),
       value_count(value_count)
 {
     // create columns
-    for (int i = 0; i < attribute_count + value_count; i++)
+    for (unsigned int i = 0; i < attribute_count + value_count; i++)
     {
         columns.emplace_back(memory_allocator, i >= attribute_count);
     }
 };
 
-int Table::readInt(int row_pos, int column)
+int Table::readInt(unsigned long int row_pos, unsigned int column)
 {
     return columns[column].readInt(row_pos);
 }
 
-double Table::readDouble(int row_pos, int column)
+double Table::readDouble(unsigned long int row_pos, unsigned int column)
 {
     return columns[column].readDouble(row_pos);
 }
@@ -24,34 +24,34 @@ double Table::readDouble(int row_pos, int column)
 // for write, how do we get newest row_pos?
 // does write also work for updating values?
 
-void Table::writeInt(int row_pos, int column, int value)
+void Table::writeInt(unsigned long int row_pos, unsigned int column, unsigned int value)
 {
     columns[column].writeInt(row_pos, value);
 }
 
-void Table::writeDouble(int row_pos, int column, double value)
+void Table::writeDouble(unsigned long int row_pos, unsigned int column, double value)
 {
     columns[column].writeDouble(row_pos, value);
 }
 
-void Table::writeRows(int starting_row_pos, int number_of_rows, int *attributes, double *values)
+void Table::writeRows(unsigned long int starting_row_pos, unsigned long int number_of_rows, unsigned int *attributes, double *values)
 {
-    for (int column = 0; column < attribute_count + value_count; column++)
+    for (unsigned int column = 0; column < attribute_count + value_count; column++)
     {
         if (column < attribute_count)
         {
-            columns[column].writeInts(starting_row_pos, number_of_rows, &attributes[column * number_of_rows]);
+            columns[column].writeInts(starting_row_pos, number_of_rows, attributes + column * number_of_rows);
         }
         else
         {
-            columns[column].writeDoubles(starting_row_pos, number_of_rows, &values[(column - attribute_count) * number_of_rows]);
+            columns[column].writeDoubles(starting_row_pos, number_of_rows, values + (column - attribute_count) * number_of_rows);
         }
     }
 }
 
-void Table::writeRow(int row_pos, int *attributes, double *values)
+void Table::writeRow(unsigned long int row_pos, unsigned int *attributes, double *values)
 {
-    for (int column = 0; column < attribute_count + value_count; column++)
+    for (unsigned int column = 0; column < attribute_count + value_count; column++)
     {
         if (column < attribute_count)
         {
@@ -67,7 +67,7 @@ void Table::writeRow(int row_pos, int *attributes, double *values)
 std::vector<std::bitset<CHUNK_SIZE>> Table::findRows(int *attribute_predicates, double *value_predicates)
 {
     std::vector<std::bitset<CHUNK_SIZE>> result;
-    for (int i = 0; i < attribute_count; i++)
+    for (unsigned int i = 0; i < attribute_count; i++)
     {
         if (result.empty())
         {
@@ -83,7 +83,7 @@ std::vector<std::bitset<CHUNK_SIZE>> Table::findRows(int *attribute_predicates, 
         }
     }
 
-    for (int i = 0; i < value_count; i++)
+    for (unsigned int i = 0; i < value_count; i++)
     {
         if (result.empty())
         {

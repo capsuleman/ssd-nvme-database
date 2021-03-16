@@ -4,43 +4,23 @@
 TEST(TableFindRowsTest, TableFindRowsWithWriteRows)
 {
     const int table_size = 16 * 16;
-    Table table{3, 2};
-    for (int i = 0; i < table_size; i++)
-    {
-        int attributes[3] = {1, i, 2 * i};
-        double values[2] = {i + 0.1, 1.0 * i};
-        table.writeRow(i, attributes, values);
-    }
+    const int attributes_count = 3;
+    const int values_count = 2;
+    Table table{attributes_count, values_count};
 
-    int attribute_predicates[3] = {1, 2, 4};
-    double value_predicates[2] = {2.1, 2.0};
-    auto result = table.findRows(attribute_predicates, value_predicates);
+    unsigned int attributes[table_size * attributes_count];
+    double values[table_size * values_count];
 
-    for (long unsigned int i = 0; i < result.size(); i++)
+    for (unsigned int i = 0; i < table_size; i++)
     {
-        for (long unsigned int j = 0; j < CHUNK_SIZE; j++)
-        {
-            EXPECT_EQ(result[i][j], i * CHUNK_SIZE + j == 2);
-        }
+        attributes[table_size * 0 + i] = 1;
+        attributes[table_size * 1 + i] = i;
+        attributes[table_size * 2 + i] = 2 * i;
+        values[table_size * 0 + i] = 0.1 + i;
+        values[table_size * 1 + i] = 1.0 * i;
     }
-}
+    table.writeRows(0, table_size, attributes, values);
 
-TEST(TableFindRowsTest, TableFindRows)
-{
-    const int table_size = 1024;
-    Table table{3, 2};
-    for (int i = 0; i < table_size; i++)
-    {
-        if (i % (1024 * 1024) == 0)
-        {
-            std::cout << i << std::endl;
-        }
-        table.writeInt(i, 0, 1);
-        table.writeInt(i, 1, i);
-        table.writeInt(i, 2, 2 * i);
-        table.writeDouble(i, 3, i + 0.1);
-        table.writeDouble(i, 4, i * 1.0);
-    }
     int attribute_predicates[3] = {1, 2, 4};
     double value_predicates[2] = {2.1, 2.0};
     auto result = table.findRows(attribute_predicates, value_predicates);
