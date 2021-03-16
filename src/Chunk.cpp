@@ -14,21 +14,13 @@ Chunk::Chunk(int fd, unsigned long int starting_pos, bool is_double)
     if (is_double)
     {
         doubleContent.reset(nullptr);
-        double zeroes[CHUNK_SIZE];
-        for (int i = 0; i < CHUNK_SIZE; i++)
-        {
-            zeroes[i] = 0.0;
-        }
+        double zeroes[CHUNK_SIZE] = {};
         number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
     {
         intContent.reset(nullptr);
-        int zeroes[CHUNK_SIZE];
-        for (int i = 0; i < CHUNK_SIZE; i++)
-        {
-            zeroes[i] = 0;
-        }
+        int zeroes[CHUNK_SIZE] = {};
         number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(int), starting_pos);
     }
 
