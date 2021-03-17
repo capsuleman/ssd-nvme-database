@@ -3,17 +3,17 @@
 
 TEST(TableReadWriteRowsTest, TableReadWriteRows)
 {
-    const int number_of_rows = 1024 * 1024 * 1024;
-    const int write_block_size = 128 * 1024;
-    const int attributes_count = 3;
-    const int values_count = 2;
+    const unsigned long int number_of_rows = 1024 * 1024 * 1024;
+    const unsigned long int write_block_size = 128 * 1024;
+    const unsigned int attributes_count = 3;
+    const unsigned int values_count = 2;
 
     Table table{attributes_count, values_count};
-    for (int i = 0; i < number_of_rows; i += write_block_size)
+    for (unsigned long int i = 0; i < number_of_rows; i += write_block_size)
     {
         unsigned int attributes[write_block_size * attributes_count];
         double values[write_block_size * values_count];
-        for (int j = 0; j < write_block_size; j++)
+        for (unsigned long int j = 0; j < write_block_size; j++)
         {
             attributes[write_block_size * 0 + j] = 1;
             attributes[write_block_size * 1 + j] = i + j;
@@ -24,7 +24,15 @@ TEST(TableReadWriteRowsTest, TableReadWriteRows)
         table.writeRows(i, write_block_size, attributes, values);
     }
 
-    for (int i = 0; i < 3; i++)
+    for (unsigned long int i = 0; i < 3; i++)
+    {
+        EXPECT_EQ(table.readInt(i, 0), 1);
+        EXPECT_EQ(table.readInt(i, 1), i);
+        EXPECT_EQ(table.readInt(i, 2), 2 * i);
+        EXPECT_EQ(table.readDouble(i, 3), i + 0.1);
+        EXPECT_EQ(table.readDouble(i, 4), 1.0 * i);
+    }
+    for (unsigned long int i = number_of_rows - 3; i < number_of_rows; i++)
     {
         EXPECT_EQ(table.readInt(i, 0), 1);
         EXPECT_EQ(table.readInt(i, 1), i);

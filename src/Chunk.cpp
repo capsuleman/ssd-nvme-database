@@ -102,12 +102,12 @@ void Chunk::writeDouble(unsigned int chunk_pos, double value) const
 
 void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const
 {
-    unsigned int file_pos = starting_pos + starting_chunk_pos * sizeof(int);
+    unsigned long int file_pos = starting_pos + starting_chunk_pos * sizeof(int);
     pwrite(fd, attributes, number_of_values * sizeof(int), file_pos);
 }
 
 void Chunk::writeDoubles(unsigned int starting_chunk_pos, unsigned int number_of_values, double *values) const
 {
-    unsigned int file_pos = starting_pos + starting_chunk_pos * sizeof(double);
+    unsigned long int file_pos = starting_pos + starting_chunk_pos * sizeof(double);
     pwrite(fd, values, number_of_values * sizeof(double), file_pos);
 }
