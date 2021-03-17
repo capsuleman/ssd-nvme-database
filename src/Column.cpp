@@ -33,7 +33,7 @@ void Column::writeInt(unsigned long int row_pos, unsigned int value)
     unsigned long int chunk_no = row_pos / CHUNK_SIZE;
     unsigned long int chunk_pos = row_pos % CHUNK_SIZE;
 
-    if (chunks.size() < chunk_no + 1)
+    while (chunks.size() < chunk_no + 1)
     {
         chunks.push_back(memory_allocator.getChunk(false));
     }
@@ -46,7 +46,7 @@ void Column::writeDouble(unsigned long int row_pos, double value)
     unsigned long int chunk_no = row_pos / CHUNK_SIZE;
     unsigned long int chunk_pos = row_pos % CHUNK_SIZE;
 
-    if (chunks.size() < chunk_no + 1)
+    while (chunks.size() < chunk_no + 1)
     {
         chunks.push_back(memory_allocator.getChunk(true));
     }
@@ -66,7 +66,11 @@ void Column::writeInts(unsigned long int starting_row_pos, unsigned long int num
             number_of_values = remaining_number_of_values;
         }
         unsigned int chunk_no = starting_chunk_pos / CHUNK_SIZE;
-        if (chunks.size() < chunk_no + 1)
+        if (chunks.size() <= chunk_no)
+        {
+            chunks.reserve(chunk_no);
+        }
+        while (chunks.size() <= chunk_no)
         {
             chunks.push_back(memory_allocator.getChunk(false));
         }
@@ -93,7 +97,11 @@ void Column::writeDoubles(
             number_of_values = remaining_number_of_values;
         }
         unsigned int chunk_no = starting_chunk_pos / CHUNK_SIZE;
-        if (chunks.size() < chunk_no + 1)
+        if (chunks.size() <= chunk_no)
+        {
+            chunks.reserve(chunk_no);
+        }
+        while (chunks.size() < chunk_no + 1)
         {
             chunks.push_back(memory_allocator.getChunk(true));
         }
