@@ -21,7 +21,7 @@ public:
     Column &operator=(Column &&) = default;
     ~Column() = default;
 
-    int readInt(unsigned long int row_pos);
+    unsigned int readInt(unsigned long int row_pos);
     double readDouble(unsigned long int row_pos);
     void writeInts(unsigned long int starting_row_pos, unsigned long int number_of_rows, unsigned int *attributes);
     void writeDoubles(unsigned long int starting_row_pos, unsigned long int number_of_rows, double *values);

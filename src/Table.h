@@ -15,7 +15,7 @@ public:
     Table(unsigned int attribute_count, unsigned int value_count);
     ~Table() = default;
 
-    int readInt(unsigned long int row_pos, unsigned int column);
+    unsigned int readInt(unsigned long int row_pos, unsigned int column);
     double readDouble(unsigned long int row_pos, unsigned int column);
     void writeInt(unsigned long int row_pos, unsigned int column, unsigned int value);
     void writeDouble(unsigned long int row_pos, unsigned int column, double value);

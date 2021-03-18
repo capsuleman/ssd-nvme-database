@@ -6,7 +6,7 @@ Column::Column(MemoryAllocator &memory_allocator, bool is_double)
 {
 }
 
-int Column::readInt(unsigned long int row_pos)
+unsigned int Column::readInt(unsigned long int row_pos)
 {
     // surely a more efficient way of doing this, look up java code
     // think of possible overflows or whatever

@@ -78,7 +78,7 @@ void Chunk::unload()
     }
 }
 
-int Chunk::readInt(unsigned long int chunk_pos) const
+unsigned int Chunk::readInt(unsigned long int chunk_pos) const
 {
     return intContent[chunk_pos];
 }

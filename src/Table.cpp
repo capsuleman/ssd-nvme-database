@@ -10,7 +10,7 @@ Table::Table(unsigned int attribute_count, unsigned int value_count)
     }
 };
 
-int Table::readInt(unsigned long int row_pos, unsigned int column)
+unsigned int Table::readInt(unsigned long int row_pos, unsigned int column)
 {
     return columns[column].readInt(row_pos);
 }

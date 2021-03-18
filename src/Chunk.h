@@ -24,7 +24,7 @@ public:
 
     void load();   // Load the content
     void unload(); // Unload the content
-    int readInt(unsigned long int chunk_pos) const;
+    unsigned int readInt(unsigned long int chunk_pos) const;
     double readDouble(unsigned long int chunk_pos) const;
     void writeInts(unsigned starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const;
     void writeDoubles(unsigned starting_chunk_pos, unsigned int number_of_values, double *values) const;
