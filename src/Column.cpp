@@ -28,32 +28,6 @@ double Column::readDouble(unsigned long int row_pos)
     return value;
 }
 
-void Column::writeInt(unsigned long int row_pos, unsigned int value)
-{
-    unsigned long int chunk_no = row_pos / CHUNK_SIZE;
-    unsigned long int chunk_pos = row_pos % CHUNK_SIZE;
-
-    while (chunks.size() < chunk_no + 1)
-    {
-        chunks.push_back(memory_allocator.getChunk(false));
-    }
-
-    chunks[chunk_no].writeInt(chunk_pos, value);
-}
-
-void Column::writeDouble(unsigned long int row_pos, double value)
-{
-    unsigned long int chunk_no = row_pos / CHUNK_SIZE;
-    unsigned long int chunk_pos = row_pos % CHUNK_SIZE;
-
-    while (chunks.size() < chunk_no + 1)
-    {
-        chunks.push_back(memory_allocator.getChunk(true));
-    }
-
-    chunks[chunk_no].writeDouble(chunk_pos, value);
-}
-
 void Column::writeInts(unsigned long int starting_row_pos, unsigned long int number_of_rows, unsigned int *attributes)
 {
     unsigned long int starting_chunk_pos = starting_row_pos;

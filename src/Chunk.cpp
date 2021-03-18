@@ -88,18 +88,6 @@ double Chunk::readDouble(unsigned long int chunk_pos) const
     return doubleContent[chunk_pos];
 }
 
-void Chunk::writeInt(unsigned int chunk_pos, unsigned int value) const
-{
-    unsigned int file_pos = starting_pos + chunk_pos * sizeof(int);
-    pwrite(fd, &value, sizeof(int), file_pos);
-}
-
-void Chunk::writeDouble(unsigned int chunk_pos, double value) const
-{
-    unsigned int file_pos = starting_pos + chunk_pos * sizeof(double);
-    pwrite(fd, &value, sizeof(double), file_pos);
-}
-
 void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const
 {
     unsigned long int file_pos = starting_pos + starting_chunk_pos * sizeof(int);
