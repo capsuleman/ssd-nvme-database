@@ -87,21 +87,14 @@ void Column::writeDoubles(
 std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
 {
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>(chunks.size());
-    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no += ROW_CHUNK_LOAD_N)
-    {   
-        // make parallel
-        for (unsigned long int i = 0; ((chunk_no + i < chunks.size()) && (i < ROW_CHUNK_LOAD_N)); i++) {
-            chunks[chunk_no + i].load();
+    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no++)
+    {
+        chunks[chunk_no].load();
+        for (unsigned long int chunk_pos = 0; chunk_pos < CHUNK_SIZE; chunk_pos++)
+        {
+            result[chunk_no][chunk_pos] = chunks[chunk_no].readInt(chunk_pos) == predicate;
         }
-        for (unsigned long int i = 0; ((chunk_no + i < chunks.size()) && (i < ROW_CHUNK_LOAD_N)); i++) {
-            for (unsigned long int chunk_pos = 0; chunk_pos < CHUNK_SIZE; chunk_pos++)
-            {
-                result[chunk_no + i][chunk_pos] = chunks[chunk_no].readInt(chunk_pos) == predicate;
-            }
-        }
-        for (unsigned long int i = 0; ((chunk_no + i < chunks.size()) && (i < ROW_CHUNK_LOAD_N)); i++) {
-            chunks[chunk_no + i].unload();
-        }
+        chunks[chunk_no].unload();
     }
     return result;
 }
@@ -109,20 +102,14 @@ std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
 std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate)
 {
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>(chunks.size());
-    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no += ROW_CHUNK_LOAD_N)
-    {   
-        for (unsigned long int i = 0; ((chunk_no + i < chunks.size()) && (i < ROW_CHUNK_LOAD_N)); i++) {
-            chunks[chunk_no + i].load();
+    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no++)
+    {
+        chunks[chunk_no].load();
+        for (unsigned long int chunk_pos = 0; chunk_pos < CHUNK_SIZE; chunk_pos++)
+        {
+            result[chunk_no][chunk_pos] = chunks[chunk_no].readDouble(chunk_pos) == predicate;
         }
-        for (unsigned long int i = 0; ((chunk_no + i < chunks.size()) && (i < ROW_CHUNK_LOAD_N)); i++) {
-            for (unsigned long int chunk_pos = 0; chunk_pos < CHUNK_SIZE; chunk_pos++)
-            {
-                result[chunk_no + i][chunk_pos] = chunks[chunk_no].readDouble(chunk_pos) == predicate;
-            }
-        }
-        for (unsigned long int i = 0; ((chunk_no + i < chunks.size()) && (i < ROW_CHUNK_LOAD_N)); i++) {
-            chunks[chunk_no + i].unload();
-        }
+        chunks[chunk_no].unload();
     }
     return result;
 }
