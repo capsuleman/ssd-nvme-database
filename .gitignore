@@ -33,3 +33,4 @@
 
 build/**
 googletest/
+benchmark/
