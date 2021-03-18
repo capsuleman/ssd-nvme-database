@@ -40,6 +40,19 @@ TEST(TableReadWriteRowsTest, TableReadWriteRows)
         EXPECT_EQ(table.readDouble(i, 3), i + 0.1);
         EXPECT_EQ(table.readDouble(i, 4), 1.0 * i);
     }
+
+    int row_to_find = 19542;
+    int attribute_predicates[3] = {1, row_to_find, 2 * row_to_find};
+    double value_predicates[2] = {0.1 + row_to_find, 1.0 * row_to_find};
+    auto result = table.findRows(attribute_predicates, value_predicates);
+
+    for (long unsigned int i = 0; i < result.size(); i++)
+    {
+        for (long unsigned int j = 0; j < CHUNK_SIZE; j++)
+        {
+            EXPECT_EQ(result[i][j], i * CHUNK_SIZE + j == row_to_find);
+        }
+    }
 }
 
 TEST(TableReadWriteRowsTest, TableReadWriteRowsWithOffset)
