@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <vector>
+#include <liburing.h>
 
 #include "main.h"
 #include "Chunk.h"
@@ -28,6 +29,9 @@ public:
 
     std::vector<std::bitset<CHUNK_SIZE>> findIntRows(int predicate);
     std::vector<std::bitset<CHUNK_SIZE>> findDoubleRows(double predicate);
+
+    int submit_read_request(struct io_uring *ring);
+    int get_read(struct io_uring *ring);
 };
 
 #endif

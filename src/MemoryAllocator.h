@@ -6,10 +6,10 @@
 
 class MemoryAllocator
 {
-    int fd; // File descriptor where data is stored
     unsigned long int last_line;
 
 public:
+    int fd; // File descriptor where data is stored
     MemoryAllocator();
     ~MemoryAllocator() = default;
 
