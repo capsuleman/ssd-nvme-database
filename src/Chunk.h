@@ -1,6 +1,7 @@
 #ifndef CHUNK_H
 #define CHUNK_H
 
+#include <bitset>
 #include <cstddef>
 #include <memory>
 #include <vector>
@@ -26,6 +27,8 @@ public:
     void unload(); // Unload the content
     unsigned int readInt(unsigned long int chunk_pos) const;
     double readDouble(unsigned long int chunk_pos) const;
+    std::bitset<CHUNK_SIZE> findInt(unsigned int predicate) const;
+    std::bitset<CHUNK_SIZE> findDouble(double predicate) const;
     void writeInts(unsigned starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const;
     void writeDoubles(unsigned starting_chunk_pos, unsigned int number_of_values, double *values) const;
 };

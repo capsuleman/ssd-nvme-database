@@ -88,6 +88,32 @@ double Chunk::readDouble(unsigned long int chunk_pos) const
     return doubleContent[chunk_pos];
 }
 
+std::bitset<CHUNK_SIZE> Chunk::findInt(unsigned int predicate) const
+{
+    std::bitset<CHUNK_SIZE> result;
+    for (unsigned long int i = 0; i < CHUNK_SIZE; i++)
+    {
+        if (predicate == intContent[i])
+        {
+            result.set(i);
+        }
+    }
+    return result;
+}
+
+std::bitset<CHUNK_SIZE> Chunk::findDouble(double predicate) const
+{
+    std::bitset<CHUNK_SIZE> result;
+    for (unsigned long int i = 0; i < CHUNK_SIZE; i++)
+    {
+        if (predicate == doubleContent[i])
+        {
+            result.set(i);
+        }
+    }
+    return result;
+}
+
 void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const
 {
     unsigned long int file_pos = starting_pos + starting_chunk_pos * sizeof(int);
