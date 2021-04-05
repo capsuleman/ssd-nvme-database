@@ -88,11 +88,11 @@ std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
 {
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
     result.reserve(chunks.size());
-    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no++)
+    for (Chunk &chunk : chunks)
     {
-        chunks[chunk_no].load();
-        result.push_back(chunks[chunk_no].findInt(predicate));
-        chunks[chunk_no].unload();
+        chunk.load();
+        result.push_back(chunk.findInt(predicate));
+        chunk.unload();
     }
     return result;
 }
@@ -101,11 +101,11 @@ std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate)
 {
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
     result.reserve(chunks.size());
-    for (unsigned long int chunk_no = 0; chunk_no < chunks.size(); chunk_no++)
+    for (Chunk &chunk : chunks)
     {
-        chunks[chunk_no].load();
-        result.push_back(chunks[chunk_no].findDouble(predicate));
-        chunks[chunk_no].unload();
+        chunk.load();
+        result.push_back(chunk.findDouble(predicate));
+        chunk.unload();
     }
     return result;
 }
