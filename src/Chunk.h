@@ -10,12 +10,12 @@
 
 class Chunk
 {
-    int fd;                                     // File descriptor where data is stored
-    unsigned long int starting_pos;             // Starting position in file
-    bool is_double;                             // Is storing int or double
-    unsigned int nb_element;                    // Current number of element in the chunk
-    std::unique_ptr<unsigned int[]> intContent; // Cache for reading data (could be nullptr when data is not loaded)
-    std::unique_ptr<double[]> doubleContent;    // Same for double
+    int fd;                                   // File descriptor where data is stored
+    unsigned long int starting_pos;           // Starting position in file
+    bool is_double;                           // Is storing int or double
+    unsigned int nb_element;                  // Current number of element in the chunk
+    std::unique_ptr<unsigned int[]> intCache; // Cache for reading data (could be nullptr when data is not loaded)
+    std::unique_ptr<double[]> doubleCache;    // Same for double
 
 public:
     Chunk(int fd, unsigned long int starting_pos, bool is_double);
