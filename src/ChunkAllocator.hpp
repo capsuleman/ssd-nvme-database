@@ -1,8 +1,8 @@
 #ifndef CHUNK_ALLOCATOR_HPP
 #define CHUNK_ALLOCATOR_HPP
 
-#include "main.h"
-#include "Chunk.h"
+#include "main.hpp"
+#include "Chunk.hpp"
 
 class ChunkAllocator
 {

@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "Table.h"
+#include "Table.hpp"
 
 int main(int argc, char **argv)
 {

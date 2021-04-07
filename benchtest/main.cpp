@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "benchmark/benchmark.h"
-#include "Table.h"
+#include "Table.hpp"
 
 static void BM_TableWrite(benchmark::State &state)
 {

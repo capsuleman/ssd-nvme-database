@@ -1,4 +1,4 @@
-#include "Column.h"
+#include "Column.hpp"
 
 Column::Column(ChunkAllocator &chunk_allocator, bool is_double)
     : chunk_allocator(chunk_allocator),

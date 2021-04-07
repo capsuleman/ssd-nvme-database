@@ -1,8 +1,8 @@
-#ifndef TABLE_H
-#define TABLE_H
+#ifndef TABLE_HPP
+#define TABLE_HPP
 
-#include "Column.h"
-#include "ChunkAllocator.h"
+#include "Column.hpp"
+#include "ChunkAllocator.hpp"
 
 class Table
 {

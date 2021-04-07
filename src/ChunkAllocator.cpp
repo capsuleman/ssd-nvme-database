@@ -3,7 +3,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "ChunkAllocator.h"
+#include "ChunkAllocator.hpp"
 
 ChunkAllocator::ChunkAllocator()
 {

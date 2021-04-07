@@ -1,12 +1,12 @@
-#ifndef COLUMN_H
-#define COLUMN_H
+#ifndef COLUMN_HPP
+#define COLUMN_HPP
 
 #include <bitset>
 #include <vector>
 
-#include "main.h"
-#include "Chunk.h"
-#include "ChunkAllocator.h"
+#include "main.hpp"
+#include "Chunk.hpp"
+#include "ChunkAllocator.hpp"
 
 // specify if double or single on creation
 class Column

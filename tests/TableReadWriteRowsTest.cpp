@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Table.h"
+#include "Table.hpp"
 
 TEST(TableReadWriteRowsTest, TableReadWriteRows)
 {

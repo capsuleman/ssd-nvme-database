@@ -1,12 +1,12 @@
-#ifndef CHUNK_H
-#define CHUNK_H
+#ifndef CHUNK_HPP
+#define CHUNK_HPP
 
 #include <bitset>
 #include <cstddef>
 #include <memory>
 #include <vector>
 
-#include "main.h"
+#include "main.hpp"
 
 class Chunk
 {

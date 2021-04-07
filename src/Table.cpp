@@ -1,4 +1,4 @@
-#include "Table.h"
+#include "Table.hpp"
 
 Table::Table(unsigned int attribute_count, unsigned int value_count)
     : attribute_count(attribute_count),
