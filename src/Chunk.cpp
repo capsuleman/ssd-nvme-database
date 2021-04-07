@@ -13,13 +13,13 @@ Chunk::Chunk(int fd, unsigned long int starting_pos, bool is_double)
     int number_written = -1;
     if (is_double)
     {
-        doubleContent.reset(nullptr);
+        doubleCache.reset(nullptr);
         double zeroes[CHUNK_SIZE] = {};
         number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
     {
-        intContent.reset(nullptr);
+        intCache.reset(nullptr);
         int zeroes[CHUNK_SIZE] = {};
         number_written = pwrite(fd, &zeroes, CHUNK_SIZE * sizeof(int), starting_pos);
     }
@@ -35,8 +35,8 @@ Chunk::Chunk(Chunk &&other)
       starting_pos(other.starting_pos),
       is_double(other.is_double),
       nb_element(other.nb_element),
-      intContent(std::move(other.intContent)),
-      doubleContent(std::move(other.doubleContent))
+      intCache(std::move(other.intCache)),
+      doubleCache(std::move(other.doubleCache))
 {
 }
 
@@ -46,8 +46,8 @@ Chunk &Chunk::operator=(Chunk &&other)
     starting_pos = other.starting_pos;
     is_double = other.is_double;
     nb_element = other.nb_element;
-    intContent = std::move(other.intContent);
-    doubleContent = std::move(other.doubleContent);
+    intCache = std::move(other.intCache);
+    doubleCache = std::move(other.doubleCache);
 
     return *this;
 }
@@ -56,13 +56,13 @@ void Chunk::load()
 {
     if (is_double)
     {
-        doubleContent.reset(new double[CHUNK_SIZE]);
-        pread(fd, &doubleContent[0], CHUNK_SIZE * sizeof(double), starting_pos);
+        doubleCache.reset(new double[CHUNK_SIZE]);
+        pread(fd, &doubleCache[0], CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
     {
-        intContent.reset(new unsigned int[CHUNK_SIZE]);
-        pread(fd, &intContent[0], CHUNK_SIZE * sizeof(int), starting_pos);
+        intCache.reset(new unsigned int[CHUNK_SIZE]);
+        pread(fd, &intCache[0], CHUNK_SIZE * sizeof(int), starting_pos);
     }
 }
 
@@ -70,22 +70,50 @@ void Chunk::unload()
 {
     if (is_double)
     {
-        doubleContent.reset(nullptr);
+        doubleCache.reset(nullptr);
     }
     else
     {
-        intContent.reset(nullptr);
+        intCache.reset(nullptr);
     }
 }
 
 unsigned int Chunk::readInt(unsigned long int chunk_pos) const
 {
-    return intContent[chunk_pos];
+    return intCache[chunk_pos];
 }
 
 double Chunk::readDouble(unsigned long int chunk_pos) const
 {
-    return doubleContent[chunk_pos];
+    return doubleCache[chunk_pos];
+}
+
+std::bitset<CHUNK_SIZE> Chunk::findInt(unsigned int predicate) const
+{
+    std::bitset<CHUNK_SIZE> result;
+    unsigned int *intContent = intCache.get();
+    for (unsigned long int i = 0; i < CHUNK_SIZE; i++)
+    {
+        if (predicate == intContent[i])
+        {
+            result.set(i);
+        }
+    }
+    return result;
+}
+
+std::bitset<CHUNK_SIZE> Chunk::findDouble(double predicate) const
+{
+    std::bitset<CHUNK_SIZE> result;
+    double *doubleContent = doubleCache.get();
+    for (unsigned long int i = 0; i < CHUNK_SIZE; i++)
+    {
+        if (predicate == doubleContent[i])
+        {
+            result.set(i);
+        }
+    }
+    return result;
 }
 
 void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const
