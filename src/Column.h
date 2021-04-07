@@ -6,17 +6,17 @@
 
 #include "main.h"
 #include "Chunk.h"
-#include "MemoryAllocator.h"
+#include "ChunkAllocator.h"
 
 // specify if double or single on creation
 class Column
 {
-    MemoryAllocator &memory_allocator; // Memory Allocator to generate new chunk
-    bool is_double;                    // Integer or double column
-    std::vector<Chunk> chunks;         // Chunks constituting the column
+    ChunkAllocator &chunk_allocator; // Memory Allocator to generate new chunk
+    bool is_double;                  // Integer or double column
+    std::vector<Chunk> chunks;       // Chunks constituting the column
 
 public:
-    Column(MemoryAllocator &memory_allocator, bool is_double);
+    Column(ChunkAllocator &chunk_allocator, bool is_double);
     Column(Column &&) = default;
     Column &operator=(Column &&) = default;
     ~Column() = default;

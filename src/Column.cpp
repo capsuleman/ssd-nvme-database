@@ -1,7 +1,7 @@
 #include "Column.h"
 
-Column::Column(MemoryAllocator &memory_allocator, bool is_double)
-    : memory_allocator(memory_allocator),
+Column::Column(ChunkAllocator &chunk_allocator, bool is_double)
+    : chunk_allocator(chunk_allocator),
       is_double(is_double)
 {
 }
@@ -46,7 +46,7 @@ void Column::writeInts(unsigned long int starting_row_pos, unsigned long int num
         }
         while (chunks.size() <= chunk_no)
         {
-            chunks.push_back(memory_allocator.getChunk(false));
+            chunks.push_back(chunk_allocator.getChunk(false));
         }
         chunks[chunk_no].writeInts(
             starting_chunk_pos % CHUNK_SIZE,
@@ -77,7 +77,7 @@ void Column::writeDoubles(
         }
         while (chunks.size() < chunk_no + 1)
         {
-            chunks.push_back(memory_allocator.getChunk(true));
+            chunks.push_back(chunk_allocator.getChunk(true));
         }
         chunks[chunk_no].writeDoubles(starting_chunk_pos % CHUNK_SIZE, number_of_values, values + starting_chunk_pos - starting_row_pos);
         starting_chunk_pos += number_of_values;

@@ -1,17 +1,17 @@
-#ifndef MEMORY_ALLOCATOR_H
-#define MEMORY_ALLOCATOR_H
+#ifndef CHUNK_ALLOCATOR_HPP
+#define CHUNK_ALLOCATOR_HPP
 
 #include "main.h"
 #include "Chunk.h"
 
-class MemoryAllocator
+class ChunkAllocator
 {
     int fd; // File descriptor where data is stored
     unsigned long int last_line;
 
 public:
-    MemoryAllocator();
-    ~MemoryAllocator() = default;
+    ChunkAllocator();
+    ~ChunkAllocator() = default;
 
     Chunk getChunk(bool is_double);
 };
