@@ -57,12 +57,12 @@ void Chunk::load()
     if (is_double)
     {
         doubleCache.reset(new double[CHUNK_SIZE]);
-        pread(fd, &doubleCache[0], CHUNK_SIZE * sizeof(double), starting_pos);
+        pread(fd, doubleCache.get(), CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
     {
         intCache.reset(new unsigned int[CHUNK_SIZE]);
-        pread(fd, &intCache[0], CHUNK_SIZE * sizeof(int), starting_pos);
+        pread(fd, intCache.get(), CHUNK_SIZE * sizeof(int), starting_pos);
     }
 }
 
