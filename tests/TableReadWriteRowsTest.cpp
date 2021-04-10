@@ -3,7 +3,7 @@
 
 TEST(TableReadWriteRowsTest, TableReadWriteRows)
 {
-    const unsigned long int number_of_rows = 1024 * 1024 * 1024;
+    const unsigned long int number_of_rows = 1024 * 1024;
     const unsigned long int write_block_size = 128 * 1024;
     const unsigned int attributes_count = 3;
     const unsigned int values_count = 2;
