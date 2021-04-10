@@ -66,6 +66,27 @@ void Chunk::load()
     }
 }
 
+void Chunk::aload(io_uring *ring, unsigned long int chunk_no)
+{
+    struct io_uring_sqe *sqe;
+    struct io_data *data = (io_data *)malloc(sizeof(*data));
+
+    sqe = io_uring_get_sqe(ring);
+    if (is_double)
+    {
+        doubleCache.reset(new double[CHUNK_SIZE]);
+        io_uring_prep_read(sqe, fd, doubleCache.get(), CHUNK_SIZE * sizeof(double), starting_pos);
+    }
+    else
+    {
+        intCache.reset(new unsigned int[CHUNK_SIZE]);
+        io_uring_prep_read(sqe, fd, intCache.get(), CHUNK_SIZE * sizeof(int), starting_pos);
+    }
+    data->chunk_no = chunk_no;
+    io_uring_sqe_set_data(sqe, data);
+    io_uring_submit(ring);
+}
+
 void Chunk::unload()
 {
     if (is_double)

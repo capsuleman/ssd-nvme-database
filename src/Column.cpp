@@ -1,15 +1,20 @@
+#include <cstring>
+
 #include "Column.hpp"
 
 Column::Column(ChunkAllocator &chunk_allocator, bool is_double)
     : chunk_allocator(chunk_allocator),
       is_double(is_double)
 {
+    int ret = io_uring_queue_init(QUEUE_DEPTH, &_ring, 0);
+    if (ret < 0)
+    {
+        std::cout << "Issue on queue init: " << std::strerror(-ret) << std::endl;
+    }
 }
 
 unsigned int Column::readInt(unsigned long int row_pos)
 {
-    // surely a more efficient way of doing this, look up java code
-    // think of possible overflows or whatever
     unsigned long int chunk_no = row_pos / CHUNK_SIZE;
     unsigned long int chunk_pos = row_pos % CHUNK_SIZE;
     chunks[chunk_no].load();
@@ -84,28 +89,69 @@ void Column::writeDoubles(
     }
 }
 
+unsigned long int Column::collectOne(bool is_blocking)
+{
+    struct io_uring_cqe *cqe;
+
+    io_uring_wait_cqe(&_ring, &cqe);
+    if (cqe->res < 0)
+    {
+        std::cout << "IO issue: " << std::strerror(-cqe->res) << std::endl;
+    }
+
+    struct io_data *data = (io_data *)io_uring_cqe_get_data(cqe);
+    io_uring_cqe_seen(&_ring, cqe);
+
+    unsigned long int chunk_no = data->chunk_no;
+    free(data);
+
+    return chunk_no;
+}
+
 std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
 {
+    const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
-    result.reserve(chunks.size());
-    for (Chunk &chunk : chunks)
+    result.reserve(number_of_chunks);
+    unsigned int current_queue_length = 0;
+    unsigned long int i = 0;
+
+    while ((i < number_of_chunks) || (current_queue_length > 0))
     {
-        chunk.load();
-        result.push_back(chunk.findInt(predicate));
-        chunk.unload();
+        while ((current_queue_length < QUEUE_DEPTH) && (i < number_of_chunks))
+        {
+            chunks[i].aload(&_ring, i);
+            current_queue_length++;
+            i++;
+        }
+        unsigned long int chunk_no = collectOne(true);
+        result[chunk_no] = chunks[chunk_no].findInt(predicate);
+        chunks[chunk_no].unload();
+        current_queue_length--;
     }
     return result;
 }
 
 std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate)
 {
+    const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
-    result.reserve(chunks.size());
-    for (Chunk &chunk : chunks)
+    result.reserve(number_of_chunks);
+    unsigned int current_queue_length = 0;
+    unsigned long int i = 0;
+
+    while ((i < number_of_chunks) || (current_queue_length > 0))
     {
-        chunk.load();
-        result.push_back(chunk.findDouble(predicate));
-        chunk.unload();
+        while ((current_queue_length < QUEUE_DEPTH) && (i < number_of_chunks))
+        {
+            chunks[i].aload(&_ring, i);
+            current_queue_length++;
+            i++;
+        }
+        unsigned long int chunk_no = collectOne(true);
+        result[chunk_no] = chunks[chunk_no].findDouble(predicate);
+        chunks[chunk_no].unload();
+        current_queue_length--;
     }
     return result;
 }
