@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-    const unsigned long int number_of_rows = 1024 * 1024;
+    const unsigned long int number_of_rows = 1024 * 1024 * 1024;
     const unsigned long int write_block_size = 128 * 1024;
     const unsigned int attributes_count = 2;
     const unsigned int values_count = 2;
@@ -50,9 +50,11 @@ int main(int argc, char **argv)
     auto elapsed_seconds_write = std::chrono::duration_cast<std::chrono::duration<double>>(end_write - start_write);
     unsigned long int bytes_handled = number_of_rows * (attributes_count * sizeof(int) + values_count * sizeof(double));
 
+    unsigned long int oneGb = 1024 * 1024 * 1024;
+
     std::cout << "Number of bytes handled: " << bytes_handled << std::endl;
-    std::cout << "Read in " << elapsed_seconds_read.count() << "s (" << bytes_handled / elapsed_seconds_read.count() / 1e9 << " Go/s)" << std::endl;
-    std::cout << "Written in " << elapsed_seconds_write.count() << "s (" << bytes_handled / elapsed_seconds_write.count() / 1e9 << " Go/s)" << std::endl;
+    std::cout << "Read in " << elapsed_seconds_read.count() << "s (" << bytes_handled / elapsed_seconds_read.count() / oneGb << " Go/s)" << std::endl;
+    std::cout << "Written in " << elapsed_seconds_write.count() << "s (" << bytes_handled / elapsed_seconds_write.count() / oneGb << " Go/s)" << std::endl;
 
     return 0;
 }
