@@ -1,4 +1,4 @@
-#include "Table.h"
+#include "Table.hpp"
 
 Table::Table(unsigned int attribute_count, unsigned int value_count)
     : attribute_count(attribute_count),
@@ -6,7 +6,7 @@ Table::Table(unsigned int attribute_count, unsigned int value_count)
 {
     for (unsigned int i = 0; i < attribute_count + value_count; i++)
     {
-        columns.emplace_back(memory_allocator, i >= attribute_count);
+        columns.emplace_back(chunk_allocator, i >= attribute_count);
     }
 };
 

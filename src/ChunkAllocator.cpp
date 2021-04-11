@@ -3,9 +3,9 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "MemoryAllocator.h"
+#include "ChunkAllocator.hpp"
 
-MemoryAllocator::MemoryAllocator()
+ChunkAllocator::ChunkAllocator()
 {
     char nameBuff[32];
     memset(nameBuff, 0, sizeof(nameBuff));
@@ -15,7 +15,7 @@ MemoryAllocator::MemoryAllocator()
     last_line = 0;
 }
 
-Chunk MemoryAllocator::getChunk(bool is_double)
+Chunk ChunkAllocator::getChunk(bool is_double)
 {
     Chunk new_chunk{fd, last_line, is_double};
     last_line += CHUNK_SIZE * (is_double ? sizeof(double) : sizeof(int));

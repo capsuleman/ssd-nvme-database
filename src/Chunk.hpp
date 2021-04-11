@@ -1,12 +1,18 @@
-#ifndef CHUNK_H
-#define CHUNK_H
+#ifndef CHUNK_HPP
+#define CHUNK_HPP
 
 #include <bitset>
 #include <cstddef>
+#include <liburing.h>
 #include <memory>
 #include <vector>
 
-#include "main.h"
+#include "main.hpp"
+
+struct io_data
+{
+    unsigned long int chunk_no;
+};
 
 class Chunk
 {
@@ -23,8 +29,9 @@ public:
     Chunk &operator=(Chunk &&);
     ~Chunk() = default;
 
-    void load();   // Load the content
-    void unload(); // Unload the content
+    void load();                                            // Load the content
+    void aload(io_uring *ring, unsigned long int chunk_no); // Asynchronous load()
+    void unload();                                          // Unload the content
     unsigned int readInt(unsigned long int chunk_pos) const;
     double readDouble(unsigned long int chunk_pos) const;
     std::bitset<CHUNK_SIZE> findInt(unsigned int predicate) const;

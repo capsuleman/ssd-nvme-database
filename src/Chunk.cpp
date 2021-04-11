@@ -1,4 +1,4 @@
-#include "Chunk.h"
+#include "Chunk.hpp"
 
 #include <cerrno>
 #include <cstring>
@@ -26,7 +26,7 @@ Chunk::Chunk(int fd, unsigned long int starting_pos, bool is_double)
 
     if (number_written == -1)
     {
-        std::cout << "Error creating a new chunk starting at " << starting_pos << " (" << std::strerror(errno) << ")" << std::endl;
+        std::cout << "Error creating a new chunk starting at " << starting_pos << ": " << std::strerror(errno) << std::endl;
     }
 }
 
@@ -54,16 +54,43 @@ Chunk &Chunk::operator=(Chunk &&other)
 
 void Chunk::load()
 {
+    int number_written = -1;
     if (is_double)
     {
         doubleCache.reset(new double[CHUNK_SIZE]);
-        pread(fd, &doubleCache[0], CHUNK_SIZE * sizeof(double), starting_pos);
+        number_written = pread(fd, doubleCache.get(), CHUNK_SIZE * sizeof(double), starting_pos);
     }
     else
     {
         intCache.reset(new unsigned int[CHUNK_SIZE]);
-        pread(fd, &intCache[0], CHUNK_SIZE * sizeof(int), starting_pos);
+        number_written = pread(fd, intCache.get(), CHUNK_SIZE * sizeof(int), starting_pos);
     }
+
+    if (number_written == -1)
+    {
+        std::cout << "Error loading a chunk starting at " << starting_pos << ": " << std::strerror(errno) << std::endl;
+    }
+}
+
+void Chunk::aload(io_uring *ring, unsigned long int chunk_no)
+{
+    struct io_uring_sqe *sqe;
+    struct io_data *data = (io_data *)malloc(sizeof(*data));
+
+    sqe = io_uring_get_sqe(ring);
+    if (is_double)
+    {
+        doubleCache.reset(new double[CHUNK_SIZE]);
+        io_uring_prep_read(sqe, fd, doubleCache.get(), CHUNK_SIZE * sizeof(double), starting_pos);
+    }
+    else
+    {
+        intCache.reset(new unsigned int[CHUNK_SIZE]);
+        io_uring_prep_read(sqe, fd, intCache.get(), CHUNK_SIZE * sizeof(int), starting_pos);
+    }
+    data->chunk_no = chunk_no;
+    io_uring_sqe_set_data(sqe, data);
+    io_uring_submit(ring);
 }
 
 void Chunk::unload()
@@ -119,11 +146,19 @@ std::bitset<CHUNK_SIZE> Chunk::findDouble(double predicate) const
 void Chunk::writeInts(unsigned int starting_chunk_pos, unsigned int number_of_values, unsigned int *attributes) const
 {
     unsigned long int file_pos = starting_pos + starting_chunk_pos * sizeof(int);
-    pwrite(fd, attributes, number_of_values * sizeof(int), file_pos);
+    int number_written = pwrite(fd, attributes, number_of_values * sizeof(int), file_pos);
+    if (number_written == -1)
+    {
+        std::cout << "Error writing on chunk starting at " << starting_pos << ": " << std::strerror(errno) << std::endl;
+    }
 }
 
 void Chunk::writeDoubles(unsigned int starting_chunk_pos, unsigned int number_of_values, double *values) const
 {
     unsigned long int file_pos = starting_pos + starting_chunk_pos * sizeof(double);
-    pwrite(fd, values, number_of_values * sizeof(double), file_pos);
+    int number_written = pwrite(fd, values, number_of_values * sizeof(double), file_pos);
+    if (number_written == -1)
+    {
+        std::cout << "Error writing on chunk starting at " << starting_pos << ": " << std::strerror(errno) << std::endl;
+    }
 }

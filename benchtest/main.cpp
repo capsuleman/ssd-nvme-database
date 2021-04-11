@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "benchmark/benchmark.h"
-#include "Table.h"
+#include "Table.hpp"
 
 static void BM_TableWrite(benchmark::State &state)
 {
@@ -77,8 +77,8 @@ static void BM_TableSearch(benchmark::State &state)
 static void BM_ChunkLoad(benchmark::State &state)
 {
     const int column_size = CHUNK_SIZE;
-    MemoryAllocator memory_allocator;
-    Chunk chunk{memory_allocator.getChunk(false)};
+    ChunkAllocator chunk_allocator;
+    Chunk chunk{chunk_allocator.getChunk(false)};
 
     unsigned int attributes[column_size];
     for (int i = 0; i < column_size; i++)
@@ -106,8 +106,8 @@ static void BM_ChunkLoad(benchmark::State &state)
 static void BM_ChunkComparison(benchmark::State &state)
 {
     const int column_size = CHUNK_SIZE;
-    MemoryAllocator memory_allocator;
-    Chunk chunk{memory_allocator.getChunk(false)};
+    ChunkAllocator chunk_allocator;
+    Chunk chunk{chunk_allocator.getChunk(false)};
 
     unsigned int attributes[column_size];
     for (int i = 0; i < column_size; i++)

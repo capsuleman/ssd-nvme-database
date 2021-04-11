@@ -1,15 +1,15 @@
-#ifndef TABLE_H
-#define TABLE_H
+#ifndef TABLE_HPP
+#define TABLE_HPP
 
-#include "Column.h"
-#include "MemoryAllocator.h"
+#include "Column.hpp"
+#include "ChunkAllocator.hpp"
 
 class Table
 {
-    MemoryAllocator memory_allocator; // Memory Allocator to generate new chunk
-    unsigned int attribute_count;     // Number of int columns
-    unsigned int value_count;         // Number of double columns
-    std::vector<Column> columns;      // List of table's column
+    ChunkAllocator chunk_allocator; // Chunk Allocator to generate new chunk
+    unsigned int attribute_count;   // Number of int columns
+    unsigned int value_count;       // Number of double columns
+    std::vector<Column> columns;    // List of table's column
 
 public:
     Table(unsigned int attribute_count, unsigned int value_count);
