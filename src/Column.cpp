@@ -1,4 +1,5 @@
 #include <cstring>
+#include <omp.h>
 
 #include "Column.hpp"
 
@@ -108,11 +109,12 @@ unsigned long int Column::collectOne(bool is_blocking)
     return chunk_no;
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRowsSync(int predicate, bool without_loading)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRowsSync(int predicate, bool without_loading, bool with_openmp)
 {
     const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
     result.reserve(number_of_chunks);
+#pragma omp parallel for schedule(static)
     for (unsigned long int i = 0; i < number_of_chunks; i++)
     {
         if (without_loading)
@@ -153,30 +155,31 @@ std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRowsAsync(int predicate)
     return result;
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate, bool use_async, bool without_loading)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate, bool use_async, bool without_loading, bool with_openmp)
 {
     if (use_async)
     {
         return findIntRowsAsync(predicate);
     }
-    return findIntRowsSync(predicate, without_loading);
+    return findIntRowsSync(predicate, without_loading, with_openmp);
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRowsSync(double predicate, bool without_loading)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRowsSync(double predicate, bool without_loading, bool with_openmp)
 {
     const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
     result.reserve(number_of_chunks);
+#pragma omp parallel for schedule(static) if (with_openmp)
     for (unsigned long int i = 0; i < number_of_chunks; i++)
     {
         if (without_loading)
         {
-            result[i] = chunks[i].findInt(predicate);
+            result[i] = chunks[i].findDouble(predicate);
         }
         else
         {
             chunks[i].load();
-            result[i] = chunks[i].findInt(predicate);
+            result[i] = chunks[i].findDouble(predicate);
             chunks[i].unload();
         }
     }
@@ -207,13 +210,13 @@ std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRowsAsync(double predicat
     return result;
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate, bool use_async, bool without_loading)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate, bool use_async, bool without_loading, bool with_openmp)
 {
     if (use_async)
     {
         return findDoubleRowsAsync(predicate);
     }
-    return findDoubleRowsSync(predicate, without_loading);
+    return findDoubleRowsSync(predicate, without_loading, with_openmp);
 }
 
 void Column::loadEverything()

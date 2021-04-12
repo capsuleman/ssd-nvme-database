@@ -50,18 +50,18 @@ void Table::writeRow(unsigned long int row_pos, unsigned int *attributes, double
     return writeRows(row_pos, 1, attributes, values);
 };
 
-std::vector<std::bitset<CHUNK_SIZE>> Table::findRows(int *attribute_predicates, double *value_predicates, bool use_async, bool without_loading)
+std::vector<std::bitset<CHUNK_SIZE>> Table::findRows(int *attribute_predicates, double *value_predicates, bool use_async, bool without_loading, bool with_openmp)
 {
     std::vector<std::bitset<CHUNK_SIZE>> result;
     for (unsigned int i = 0; i < attribute_count; i++)
     {
         if (result.empty())
         {
-            result = columns[i].findIntRows(attribute_predicates[i], use_async, without_loading);
+            result = columns[i].findIntRows(attribute_predicates[i], use_async, without_loading, with_openmp);
         }
         else
         {
-            std::vector<std::bitset<CHUNK_SIZE>> partial_result{columns[i].findIntRows(attribute_predicates[i], use_async, without_loading)};
+            std::vector<std::bitset<CHUNK_SIZE>> partial_result{columns[i].findIntRows(attribute_predicates[i], use_async, without_loading, with_openmp)};
             for (long unsigned int j = 0; j < result.size(); j++)
             {
                 result[j] &= partial_result[j];
@@ -73,11 +73,11 @@ std::vector<std::bitset<CHUNK_SIZE>> Table::findRows(int *attribute_predicates, 
     {
         if (result.empty())
         {
-            result = columns[attribute_count + i].findDoubleRows(value_predicates[i], use_async, without_loading);
+            result = columns[attribute_count + i].findDoubleRows(value_predicates[i], use_async, without_loading, with_openmp);
         }
         else
         {
-            std::vector<std::bitset<CHUNK_SIZE>> partial_result{columns[attribute_count + i].findDoubleRows(value_predicates[i], use_async, without_loading)};
+            std::vector<std::bitset<CHUNK_SIZE>> partial_result{columns[attribute_count + i].findDoubleRows(value_predicates[i], use_async, without_loading, with_openmp)};
             for (long unsigned int j = 0; j < result.size(); j++)
             {
                 result[j] &= partial_result[j];
