@@ -8,5 +8,7 @@ add_executable(${BINARY}_run ${SOURCES})
 
 add_library(${BINARY}_lib STATIC ${SOURCES})
 
-target_link_libraries(${BINARY}_lib uring)
-target_link_libraries(${BINARY}_run uring)
+find_package(OpenMP REQUIRED)
+
+target_link_libraries(${BINARY}_lib uring OpenMP::OpenMP_CXX)
+target_link_libraries(${BINARY}_run uring OpenMP::OpenMP_CXX)

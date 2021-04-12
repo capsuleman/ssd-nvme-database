@@ -1,10 +1,13 @@
 #include <chrono>
 #include <iostream>
+#include <omp.h>
 
 #include "Table.hpp"
 
 int main(int argc, char **argv)
 {
+    std::cout << "Number of thread available: " << omp_get_max_threads() << std::endl;
+
     const unsigned long int number_of_rows = 1024 * 1024 * 1024;
     const unsigned long int write_block_size = 128 * 1024;
     const unsigned int attributes_count = 2;
