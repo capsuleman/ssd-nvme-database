@@ -22,7 +22,10 @@ public:
     void writeRow(unsigned long int row_pos, unsigned int *attributes, double *values);
     void writeRows(unsigned long int starting_row_pos, unsigned long int number_of_rows, unsigned int *attributes, double *values);
 
-    std::vector<std::bitset<CHUNK_SIZE>> findRows(int *attribute_predicates, double *value_predicates);
+    std::vector<std::bitset<CHUNK_SIZE>> findRows(int *attribute_predicates, double *value_predicates, bool use_async, bool without_loading, bool with_openmp);
+
+    void loadEverything();
+    void unloadEverything();
 };
 
 #endif

@@ -69,7 +69,7 @@ static void BM_TableSearch(benchmark::State &state)
     for (auto _ : state)
     {
         int attribute_predicates[1] = {2};
-        auto result = table.findRows(attribute_predicates, nullptr);
+        auto result = table.findRows(attribute_predicates, nullptr, false, false, false);
     };
 }
 

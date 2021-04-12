@@ -1,4 +1,5 @@
 #include <cstring>
+#include <omp.h>
 
 #include "Column.hpp"
 
@@ -94,10 +95,10 @@ unsigned long int Column::collectOne(bool is_blocking)
     struct io_uring_cqe *cqe;
 
     io_uring_wait_cqe(&_ring, &cqe);
-    if (cqe->res < 0)
-    {
-        std::cout << "IO issue: " << std::strerror(-cqe->res) << std::endl;
-    }
+    // if (cqe->res < 0)
+    // {
+    //     std::cout << "IO issue: " << std::strerror(-cqe->res) << std::endl;
+    // }
 
     struct io_data *data = (io_data *)io_uring_cqe_get_data(cqe);
     io_uring_cqe_seen(&_ring, cqe);
@@ -108,7 +109,29 @@ unsigned long int Column::collectOne(bool is_blocking)
     return chunk_no;
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRowsSync(int predicate, bool without_loading, bool with_openmp)
+{
+    const unsigned long int number_of_chunks = chunks.size();
+    std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
+    result.reserve(number_of_chunks);
+#pragma omp parallel for schedule(static)
+    for (unsigned long int i = 0; i < number_of_chunks; i++)
+    {
+        if (without_loading)
+        {
+            result[i] = chunks[i].findInt(predicate);
+        }
+        else
+        {
+            chunks[i].load();
+            result[i] = chunks[i].findInt(predicate);
+            chunks[i].unload();
+        }
+    }
+    return result;
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRowsAsync(int predicate)
 {
     const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
@@ -132,7 +155,38 @@ std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
     return result;
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate, bool use_async, bool without_loading, bool with_openmp)
+{
+    if (use_async)
+    {
+        return findIntRowsAsync(predicate);
+    }
+    return findIntRowsSync(predicate, without_loading, with_openmp);
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRowsSync(double predicate, bool without_loading, bool with_openmp)
+{
+    const unsigned long int number_of_chunks = chunks.size();
+    std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
+    result.reserve(number_of_chunks);
+#pragma omp parallel for schedule(static) if (with_openmp)
+    for (unsigned long int i = 0; i < number_of_chunks; i++)
+    {
+        if (without_loading)
+        {
+            result[i] = chunks[i].findDouble(predicate);
+        }
+        else
+        {
+            chunks[i].load();
+            result[i] = chunks[i].findDouble(predicate);
+            chunks[i].unload();
+        }
+    }
+    return result;
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRowsAsync(double predicate)
 {
     const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
@@ -154,4 +208,29 @@ std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate)
         current_queue_length--;
     }
     return result;
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate, bool use_async, bool without_loading, bool with_openmp)
+{
+    if (use_async)
+    {
+        return findDoubleRowsAsync(predicate);
+    }
+    return findDoubleRowsSync(predicate, without_loading, with_openmp);
+}
+
+void Column::loadEverything()
+{
+    for (auto &chunk : chunks)
+    {
+        chunk.load();
+    }
+}
+
+void Column::unloadEverything()
+{
+    for (auto &chunk : chunks)
+    {
+        chunk.load();
+    }
 }
