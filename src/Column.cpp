@@ -94,10 +94,10 @@ unsigned long int Column::collectOne(bool is_blocking)
     struct io_uring_cqe *cqe;
 
     io_uring_wait_cqe(&_ring, &cqe);
-    if (cqe->res < 0)
-    {
-        std::cout << "IO issue: " << std::strerror(-cqe->res) << std::endl;
-    }
+    // if (cqe->res < 0)
+    // {
+    //     std::cout << "IO issue: " << std::strerror(-cqe->res) << std::endl;
+    // }
 
     struct io_data *data = (io_data *)io_uring_cqe_get_data(cqe);
     io_uring_cqe_seen(&_ring, cqe);
