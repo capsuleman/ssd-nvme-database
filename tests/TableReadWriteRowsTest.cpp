@@ -44,7 +44,7 @@ TEST(TableReadWriteRowsTest, TableReadWriteRows)
     int row_to_find = 19542;
     int attribute_predicates[3] = {1, row_to_find, 2 * row_to_find};
     double value_predicates[2] = {0.1 + row_to_find, 1.0 * row_to_find};
-    auto result = table.findRows(attribute_predicates, value_predicates);
+    auto result = table.findRows(attribute_predicates, value_predicates, false, false);
 
     for (long unsigned int i = 0; i < result.size(); i++)
     {

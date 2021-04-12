@@ -108,31 +108,123 @@ unsigned long int Column::collectOne(bool is_blocking)
     return chunk_no;
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRowsSync(int predicate, bool without_loading)
 {
     const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
     result.reserve(number_of_chunks);
-    for (auto &chunk : chunks)
+    for (unsigned long int i = 0; i < number_of_chunks; i++)
     {
-        result.push_back(chunk.findInt(predicate));
+        if (without_loading)
+        {
+            result[i] = chunks[i].findInt(predicate);
+        }
+        else
+        {
+            chunks[i].load();
+            result[i] = chunks[i].findInt(predicate);
+            chunks[i].unload();
+        }
     }
     return result;
 }
 
-std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate)
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRowsAsync(int predicate)
 {
     const unsigned long int number_of_chunks = chunks.size();
     std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
     result.reserve(number_of_chunks);
-    for (auto &chunk : chunks)
+    unsigned int current_queue_length = 0;
+    unsigned long int i = 0;
+
+    while ((i < number_of_chunks) || (current_queue_length > 0))
     {
-        result.push_back(chunk.findDouble(predicate));
+        while ((current_queue_length < QUEUE_DEPTH) && (i < number_of_chunks))
+        {
+            chunks[i].aload(&_ring, i);
+            current_queue_length++;
+            i++;
+        }
+        unsigned long int chunk_no = collectOne(true);
+        result[chunk_no] = chunks[chunk_no].findInt(predicate);
+        chunks[chunk_no].unload();
+        current_queue_length--;
     }
     return result;
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findIntRows(int predicate, bool use_async, bool without_loading)
+{
+    if (use_async)
+    {
+        return findIntRowsAsync(predicate);
+    }
+    return findIntRowsSync(predicate, without_loading);
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRowsSync(double predicate, bool without_loading)
+{
+    const unsigned long int number_of_chunks = chunks.size();
+    std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
+    result.reserve(number_of_chunks);
+    for (unsigned long int i = 0; i < number_of_chunks; i++)
+    {
+        if (without_loading)
+        {
+            result[i] = chunks[i].findInt(predicate);
+        }
+        else
+        {
+            chunks[i].load();
+            result[i] = chunks[i].findInt(predicate);
+            chunks[i].unload();
+        }
+    }
+    return result;
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRowsAsync(double predicate)
+{
+    const unsigned long int number_of_chunks = chunks.size();
+    std::vector<std::bitset<CHUNK_SIZE>> result = std::vector<std::bitset<CHUNK_SIZE>>();
+    result.reserve(number_of_chunks);
+    unsigned int current_queue_length = 0;
+    unsigned long int i = 0;
+
+    while ((i < number_of_chunks) || (current_queue_length > 0))
+    {
+        while ((current_queue_length < QUEUE_DEPTH) && (i < number_of_chunks))
+        {
+            chunks[i].aload(&_ring, i);
+            current_queue_length++;
+            i++;
+        }
+        unsigned long int chunk_no = collectOne(true);
+        result[chunk_no] = chunks[chunk_no].findDouble(predicate);
+        chunks[chunk_no].unload();
+        current_queue_length--;
+    }
+    return result;
+}
+
+std::vector<std::bitset<CHUNK_SIZE>> Column::findDoubleRows(double predicate, bool use_async, bool without_loading)
+{
+    if (use_async)
+    {
+        return findDoubleRowsAsync(predicate);
+    }
+    return findDoubleRowsSync(predicate, without_loading);
 }
 
 void Column::loadEverything()
+{
+    for (auto &chunk : chunks)
+    {
+        chunk.load();
+    }
+}
+
+void Column::unloadEverything()
 {
     for (auto &chunk : chunks)
     {

@@ -23,7 +23,7 @@ TEST(TableFindRowsTest, TableFindRowsWithWriteRows)
 
     int attribute_predicates[3] = {1, 2, 4};
     double value_predicates[2] = {2.1, 2.0};
-    auto result = table.findRows(attribute_predicates, value_predicates);
+    auto result = table.findRows(attribute_predicates, value_predicates, false, false);
 
     for (long unsigned int i = 0; i < result.size(); i++)
     {
