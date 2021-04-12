@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     const unsigned int attributes_count = 2;
     const unsigned int values_count = 2;
 
-    unsigned long int gigabytes_handled = number_of_rows * (attributes_count * sizeof(int) + values_count * sizeof(double)) / (1024 * 1024 * 1024);
+    double gigabytes_handled = (double)number_of_rows * (attributes_count * sizeof(int) + values_count * sizeof(double)) / (1024 * 1024 * 1024);
     std::cout << "Number of gigabytes handled: " << gigabytes_handled << std::endl;
 
     Table table{attributes_count, values_count};
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
         }
     }
     auto elapsed_seconds_find_sync = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_sync - start_find_sync);
-    std::cout << "Sync find in " << elapsed_seconds_find_sync.count() << "s (" << gigabytes_handled / elapsed_seconds_find_sync.count() << " Go/s)" << std::endl;
+    std::cout << "Sync find in:         " << elapsed_seconds_find_sync.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_sync.count() << " Go/s)" << std::endl;
 
     auto start_find_async = std::chrono::high_resolution_clock::now();
     auto result_async = table.findRows(attribute_predicates, value_predicates, true, false, false);
@@ -68,13 +68,13 @@ int main(int argc, char **argv)
         }
     }
     auto elapsed_seconds_find_async = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_async - start_find_async);
-    std::cout << "Async find in " << elapsed_seconds_find_async.count() << "s (" << gigabytes_handled / elapsed_seconds_find_async.count() << " Go/s)" << std::endl;
+    std::cout << "Async find in:        " << elapsed_seconds_find_async.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_async.count() << " Go/s)" << std::endl;
 
     auto start_load = std::chrono::high_resolution_clock::now();
     table.loadEverything();
     auto end_load = std::chrono::high_resolution_clock::now();
     auto elapsed_seconds_load = std::chrono::duration_cast<std::chrono::duration<double>>(end_load - start_load);
-    std::cout << "Loaded in " << elapsed_seconds_load.count() << "s (" << gigabytes_handled / elapsed_seconds_load.count() << " Go/s)" << std::endl;
+    std::cout << "Loaded in:            " << elapsed_seconds_load.count() << "s\t(" << gigabytes_handled / elapsed_seconds_load.count() << " Go/s)" << std::endl;
 
     auto start_find_memory = std::chrono::high_resolution_clock::now();
     auto result_memory = table.findRows(attribute_predicates, value_predicates, false, true, false);
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
         }
     }
     auto elapsed_seconds_find_memory = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_memory - start_find_memory);
-    std::cout << "Memory find " << elapsed_seconds_find_memory.count() << "s (" << gigabytes_handled / elapsed_seconds_find_memory.count() << " Go/s)" << std::endl;
+    std::cout << "Memory find in:       " << elapsed_seconds_find_memory.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_memory.count() << " Go/s)" << std::endl;
 
     table.unloadEverything();
 
