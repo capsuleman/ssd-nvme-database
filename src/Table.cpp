@@ -87,3 +87,11 @@ std::vector<std::bitset<CHUNK_SIZE>> Table::findRows(int *attribute_predicates, 
 
     return result;
 }
+
+void Table::loadEverything()
+{
+    for (auto &column : columns)
+    {
+        column.loadEverything();
+    }
+}

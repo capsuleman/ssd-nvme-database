@@ -33,6 +33,8 @@ public:
 
     std::vector<std::bitset<CHUNK_SIZE>> findIntRows(int predicate);
     std::vector<std::bitset<CHUNK_SIZE>> findDoubleRows(double predicate);
+
+    void loadEverything();
 };
 
 #endif

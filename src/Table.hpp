@@ -23,6 +23,8 @@ public:
     void writeRows(unsigned long int starting_row_pos, unsigned long int number_of_rows, unsigned int *attributes, double *values);
 
     std::vector<std::bitset<CHUNK_SIZE>> findRows(int *attribute_predicates, double *value_predicates);
+
+    void loadEverything();
 };
 
 #endif
