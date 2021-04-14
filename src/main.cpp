@@ -39,88 +39,88 @@ int main(int argc, char **argv)
     int attribute_predicates[2] = {row_to_find, 2 * row_to_find};
     double value_predicates[2] = {0.1 + row_to_find, 1.0 * row_to_find};
 
-    auto start_find_sync = std::chrono::high_resolution_clock::now();
-    auto result_sync = table.findRows(attribute_predicates, value_predicates, false, false, false);
-    auto end_find_sync = std::chrono::high_resolution_clock::now();
+    // auto start_find_sync = std::chrono::high_resolution_clock::now();
+    // auto result_sync = table.findRows(attribute_predicates, value_predicates, false, false, false);
+    // auto end_find_sync = std::chrono::high_resolution_clock::now();
+    // // Checking solution
+    // for (long unsigned int i = 0; i < result_sync.size(); i++)
+    // {
+    //     for (long unsigned int j = 0; j < CHUNK_SIZE; j++)
+    //     {
+    //         if (result_sync[i][j] != (i * CHUNK_SIZE + j == row_to_find))
+    //         {
+    //             return 1;
+    //         }
+    //     }
+    // }
+    // auto elapsed_seconds_find_sync = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_sync - start_find_sync);
+    // std::cout << "Sync find in:         " << elapsed_seconds_find_sync.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_sync.count() << " Go/s)" << std::endl;
+
+    // auto start_find_async = std::chrono::high_resolution_clock::now();
+    // auto result_async = table.findRows(attribute_predicates, value_predicates, true, false, false);
+    // auto end_find_async = std::chrono::high_resolution_clock::now();
+    // // Checking solution
+    // for (long unsigned int i = 0; i < result_async.size(); i++)
+    // {
+    //     if (result_sync[i] != result_async[i])
+    //     {
+    //         return 1;
+    //     }
+    // }
+    // auto elapsed_seconds_find_async = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_async - start_find_async);
+    // std::cout << "Async find in:        " << elapsed_seconds_find_async.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_async.count() << " Go/s)" << std::endl;
+
+    // auto start_load = std::chrono::high_resolution_clock::now();
+    // table.loadEverything();
+    // auto end_load = std::chrono::high_resolution_clock::now();
+    // auto elapsed_seconds_load = std::chrono::duration_cast<std::chrono::duration<double>>(end_load - start_load);
+    // std::cout << "Loaded in:            " << elapsed_seconds_load.count() << "s\t(" << gigabytes_handled / elapsed_seconds_load.count() << " Go/s)" << std::endl;
+
+    // auto start_find_memory = std::chrono::high_resolution_clock::now();
+    // auto result_memory = table.findRows(attribute_predicates, value_predicates, false, true, false);
+    // auto end_find_memory = std::chrono::high_resolution_clock::now();
     // Checking solution
-    for (long unsigned int i = 0; i < result_sync.size(); i++)
-    {
-        for (long unsigned int j = 0; j < CHUNK_SIZE; j++)
-        {
-            if (result_sync[i][j] != (i * CHUNK_SIZE + j == row_to_find))
-            {
-                return 1;
-            }
-        }
-    }
-    auto elapsed_seconds_find_sync = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_sync - start_find_sync);
-    std::cout << "Sync find in:         " << elapsed_seconds_find_sync.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_sync.count() << " Go/s)" << std::endl;
+    // for (long unsigned int i = 0; i < result_async.size(); i++)
+    // {
+    //     if (result_sync[i] != result_memory[i])
+    //     {
+    //         return 1;
+    //     }
+    // }
+    // auto elapsed_seconds_find_memory = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_memory - start_find_memory);
+    // std::cout << "Memory find in:       " << elapsed_seconds_find_memory.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_memory.count() << " Go/s)" << std::endl;
 
-    auto start_find_async = std::chrono::high_resolution_clock::now();
-    auto result_async = table.findRows(attribute_predicates, value_predicates, true, false, false);
-    auto end_find_async = std::chrono::high_resolution_clock::now();
-    // Checking solution
-    for (long unsigned int i = 0; i < result_async.size(); i++)
-    {
-        if (result_sync[i] != result_async[i])
-        {
-            return 1;
-        }
-    }
-    auto elapsed_seconds_find_async = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_async - start_find_async);
-    std::cout << "Async find in:        " << elapsed_seconds_find_async.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_async.count() << " Go/s)" << std::endl;
-
-    auto start_load = std::chrono::high_resolution_clock::now();
-    table.loadEverything();
-    auto end_load = std::chrono::high_resolution_clock::now();
-    auto elapsed_seconds_load = std::chrono::duration_cast<std::chrono::duration<double>>(end_load - start_load);
-    std::cout << "Loaded in:            " << elapsed_seconds_load.count() << "s\t(" << gigabytes_handled / elapsed_seconds_load.count() << " Go/s)" << std::endl;
-
-    auto start_find_memory = std::chrono::high_resolution_clock::now();
-    auto result_memory = table.findRows(attribute_predicates, value_predicates, false, true, false);
-    auto end_find_memory = std::chrono::high_resolution_clock::now();
-    // Checking solution
-    for (long unsigned int i = 0; i < result_async.size(); i++)
-    {
-        if (result_sync[i] != result_memory[i])
-        {
-            return 1;
-        }
-    }
-    auto elapsed_seconds_find_memory = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_memory - start_find_memory);
-    std::cout << "Memory find in:       " << elapsed_seconds_find_memory.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_memory.count() << " Go/s)" << std::endl;
-
-    table.unloadEverything();
+    // table.unloadEverything();
 
     auto start_find_sync_omp = std::chrono::high_resolution_clock::now();
     auto result_sync_omp = table.findRows(attribute_predicates, value_predicates, false, false, true);
     auto end_find_sync_omp = std::chrono::high_resolution_clock::now();
-    // Checking solution
-    for (long unsigned int i = 0; i < result_async.size(); i++)
-    {
-        if (result_sync[i] != result_sync_omp[i])
-        {
-            return 1;
-        }
-    }
+    // // Checking solution
+    // for (long unsigned int i = 0; i < result_async.size(); i++)
+    // {
+    //     if (result_sync[i] != result_sync_omp[i])
+    //     {
+    //         return 1;
+    //     }
+    // }
     auto elapsed_seconds_find_sync_omp = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_sync_omp - start_find_sync_omp);
     std::cout << "Sync find (OMP) in:   " << elapsed_seconds_find_sync_omp.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_sync_omp.count() << " Go/s)" << std::endl;
 
-    table.loadEverything();
-    auto start_find_memory_omp = std::chrono::high_resolution_clock::now();
-    auto result_memory_omp = table.findRows(attribute_predicates, value_predicates, false, true, true);
-    auto end_find_memory_omp = std::chrono::high_resolution_clock::now();
+    // table.loadEverything();
+    // auto start_find_memory_omp = std::chrono::high_resolution_clock::now();
+    // auto result_memory_omp = table.findRows(attribute_predicates, value_predicates, false, true, true);
+    // auto end_find_memory_omp = std::chrono::high_resolution_clock::now();
     // Checking solution
-    for (long unsigned int i = 0; i < result_async.size(); i++)
-    {
-        if (result_sync[i] != result_memory_omp[i])
-        {
-            return 1;
-        }
-    }
-    auto elapsed_seconds_find_memory_omp = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_memory_omp - start_find_memory_omp);
-    std::cout << "Memory find (OMP) in: " << elapsed_seconds_find_memory_omp.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_memory_omp.count() << " Go/s)" << std::endl;
+    // for (long unsigned int i = 0; i < result_async.size(); i++)
+    // {
+    //     if (result_sync[i] != result_memory_omp[i])
+    //     {
+    //         return 1;
+    //     }
+    // }
+    // auto elapsed_seconds_find_memory_omp = std::chrono::duration_cast<std::chrono::duration<double>>(end_find_memory_omp - start_find_memory_omp);
+    // std::cout << "Memory find (OMP) in: " << elapsed_seconds_find_memory_omp.count() << "s\t(" << gigabytes_handled / elapsed_seconds_find_memory_omp.count() << " Go/s)" << std::endl;
 
-    table.unloadEverything();
+    // table.unloadEverything();
     return 0;
 }
